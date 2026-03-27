@@ -1,216 +1,48 @@
 import React, { useState } from 'react';
-import { CheckCircle, XCircle, Award, BrainCircuit } from 'lucide-react';
+import { useAuth } from '../context/AuthContext.tsx';
+import { CheckCircle, XCircle, Award, BrainCircuit, Plus, Settings, Users, BookOpen } from 'lucide-react';
+
+// Shared mock quizzes (would come from DB in real implementation)
+const initialQuizzes = [
+  {
+    id: 1,
+    title: 'Basic Algebra Quiz',
+    subject: 'Mathematics',
+    questions: [
+      { text: 'Solve for x: 2x + 5 = 15', options: ['x = 5', 'x = 10', 'x = 2', 'x = 20'], correct: 0 },
+      { text: 'What is the value of 3^3?', options: ['9', '27', '81', '6'], correct: 1 },
+      { text: 'Simplify: 4a + 3b - 2a + b', options: ['2a + 4b', '6a + 4b', '2a + 2b', '6a + 2b'], correct: 0 }
+    ]
+  },
+  {
+    id: 2,
+    title: 'Cellular Biology Basics',
+    subject: 'Integrated Science',
+    questions: [
+      { text: 'What is the powerhouse of the cell?', options: ['Nucleus', 'Mitochondria', 'Ribosome', 'Endoplasmic Reticulum'], correct: 1 },
+      { text: 'Which organelle is responsible for protein synthesis?', options: ['Golgi apparatus', 'Lysosome', 'Ribosome', 'Vacuole'], correct: 2 }
+    ]
+  }
+];
 
 export const Quizzes = () => {
+  const { user } = useAuth();
+  const [quizzes, setQuizzes] = useState<any[]>(initialQuizzes);
   const [activeQuiz, setActiveQuiz] = useState<any>(null);
+  
+  // Student State
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<number, number>>({});
   const [showResults, setShowResults] = useState(false);
 
-  // Mock quizzes
-  const quizzes = [
-    {
-      id: 1,
-      title: 'Basic Algebra Quiz',
-      subject: 'Mathematics',
-      questions: [
-        { text: 'Solve for x: 2x + 5 = 15', options: ['x = 5', 'x = 10', 'x = 2', 'x = 20'], correct: 0 },
-        { text: 'What is the value of 3^3?', options: ['9', '27', '81', '6'], correct: 1 },
-        { text: 'Simplify: 4a + 3b - 2a + b', options: ['2a + 4b', '6a + 4b', '2a + 2b', '6a + 2b'], correct: 0 }
-      ]
-    },
-    {
-      id: 2,
-      title: 'Cellular Biology Basics',
-      subject: 'Integrated Science',
-      questions: [
-        { text: 'What is the powerhouse of the cell?', options: ['Nucleus', 'Mitochondria', 'Ribosome', 'Endoplasmic Reticulum'], correct: 1 },
-        { text: 'Which organelle is responsible for protein synthesis?', options: ['Golgi apparatus', 'Lysosome', 'Ribosome', 'Vacuole'], correct: 2 },
-        { text: 'Which of the following is found in plant cells but not in animal cells?', options: ['Cell membrane', 'Nucleus', 'Chloroplast', 'Cytoplasm'], correct: 2 }
-      ]
-    },
-    {
-      id: 3,
-      title: 'Ghanaian History: Independence',
-      subject: 'Social Studies',
-      questions: [
-        { text: 'In what year did Ghana gain independence?', options: ['1957', '1960', '1945', '1966'], correct: 0 },
-        { text: 'Who was the first President of Ghana?', options: ['J.B. Danquah', 'Kwame Nkrumah', 'Jerry John Rawlings', 'Kofi Annan'], correct: 1 },
-        { text: 'What was the name of Ghana before independence?', options: ['Gold Coast', 'Ivory Coast', 'Slave Coast', 'Ashanti Empire'], correct: 0 }
-      ]
-    },
-    {
-      id: 4,
-      title: 'Introduction to Spreadsheets',
-      subject: 'Information and Communication Technology (ICT)',
-      questions: [
-        { text: 'Which software is primarily used for spreadsheets?', options: ['Microsoft Word', 'Microsoft Excel', 'Microsoft PowerPoint', 'Microsoft Access'], correct: 1 },
-        { text: 'What is the intersection of a row and a column called?', options: ['Cell', 'Box', 'Grid', 'Table'], correct: 0 },
-        { text: 'Which symbol is used to start a formula in Excel?', options: ['+', '-', '=', '*'], correct: 2 }
-      ]
-    },
-    {
-      id: 5,
-      title: 'English Grammar & Comprehension',
-      subject: 'English Language',
-      questions: [
-        { text: 'Identify the noun in this sentence: "The quick brown fox jumps over the lazy dog."', options: ['quick', 'brown', 'fox', 'jumps'], correct: 2 },
-        { text: 'What is the past tense of "go"?', options: ['goed', 'went', 'gone', 'going'], correct: 1 },
-        { text: 'Choose the correct synonym for "happy".', options: ['sad', 'angry', 'joyful', 'tired'], correct: 2 }
-      ]
-    },
-    {
-      id: 6,
-      title: 'Basic French Vocabulary',
-      subject: 'French',
-      questions: [
-        { text: 'How do you say "Hello" in French?', options: ['Au revoir', 'Bonjour', 'Merci', 'S\'il vous plaît'], correct: 1 },
-        { text: 'What does "Chat" mean in English?', options: ['Dog', 'Bird', 'Cat', 'Fish'], correct: 2 },
-        { text: 'Which of the following means "Thank you"?', options: ['Pardon', 'Oui', 'Non', 'Merci'], correct: 3 }
-      ]
-    },
-    {
-      id: 7,
-      title: 'Moral Values and Ethics',
-      subject: 'Religious and Moral Education (RME)',
-      questions: [
-        { text: 'Which of the following is a moral value?', options: ['Stealing', 'Honesty', 'Lying', 'Cheating'], correct: 1 },
-        { text: 'What is the Golden Rule?', options: ['Do unto others as you would have them do unto you', 'An eye for an eye', 'Survival of the fittest', 'Might makes right'], correct: 0 },
-        { text: 'Which of these is a traditional Ghanaian value?', options: ['Disrespect for elders', 'Individualism over community', 'Hospitality', 'Greed'], correct: 2 }
-      ]
-    },
-    {
-      id: 8,
-      title: 'Materials and Tools',
-      subject: 'Design and Technology',
-      questions: [
-        { text: 'Which tool is used for cutting wood?', options: ['Hammer', 'Screwdriver', 'Saw', 'Pliers'], correct: 2 },
-        { text: 'What is a common property of metals?', options: ['Brittle', 'Good conductor of heat', 'Transparent', 'Soft'], correct: 1 },
-        { text: 'Which of these is a natural material?', options: ['Plastic', 'Nylon', 'Wood', 'Polyester'], correct: 2 }
-      ]
-    },
-    {
-      id: 9,
-      title: 'Physical Fitness Basics',
-      subject: 'Physical Education and Health (PEH)',
-      questions: [
-        { text: 'Which of the following is a cardiovascular exercise?', options: ['Weightlifting', 'Running', 'Stretching', 'Yoga'], correct: 1 },
-        { text: 'Why is warming up important before exercise?', options: ['To get tired faster', 'To prevent injuries', 'To cool down the body', 'To decrease heart rate'], correct: 1 },
-        { text: 'Which nutrient is primarily responsible for muscle repair?', options: ['Carbohydrates', 'Fats', 'Protein', 'Vitamins'], correct: 2 }
-      ]
-    },
-    {
-      id: 10,
-      title: 'Akan Culture and Traditions',
-      subject: 'Ghanaian Language and Culture',
-      questions: [
-        { text: 'What is the traditional cloth worn by the Akan people?', options: ['Kente', 'Batakari', 'Smock', 'Agbada'], correct: 0 },
-        { text: 'Which day born name is given to a male born on Friday in Akan?', options: ['Kwame', 'Kofi', 'Kwasi', 'Yaw'], correct: 1 },
-        { text: 'What is the symbol of authority for an Akan chief?', options: ['Crown', 'Stool', 'Sword', 'Scepter'], correct: 1 }
-      ]
-    },
-    {
-      id: 11,
-      title: 'Fractions and Decimals',
-      subject: 'Mathematics',
-      questions: [
-        { text: 'What is 1/4 as a decimal?', options: ['0.25', '0.5', '0.75', '0.14'], correct: 0 },
-        { text: 'Add 1/2 and 1/3.', options: ['2/5', '5/6', '1/6', '1/5'], correct: 1 },
-        { text: 'Convert 0.8 to a fraction in its simplest form.', options: ['8/10', '4/5', '2/3', '1/8'], correct: 1 }
-      ]
-    },
-    {
-      id: 12,
-      title: 'States of Matter',
-      subject: 'Integrated Science',
-      questions: [
-        { text: 'Which state of matter has a definite shape and volume?', options: ['Solid', 'Liquid', 'Gas', 'Plasma'], correct: 0 },
-        { text: 'What is the process of a liquid turning into a gas called?', options: ['Condensation', 'Evaporation', 'Melting', 'Freezing'], correct: 1 },
-        { text: 'Which of these is NOT a state of matter?', options: ['Solid', 'Energy', 'Liquid', 'Gas'], correct: 1 }
-      ]
-    },
-    {
-      id: 13,
-      title: 'Geography of Ghana',
-      subject: 'Social Studies',
-      questions: [
-        { text: 'What is the capital city of Ghana?', options: ['Kumasi', 'Tamale', 'Accra', 'Cape Coast'], correct: 2 },
-        { text: 'Which river is the longest in Ghana?', options: ['Pra', 'Ankobra', 'Volta', 'Tano'], correct: 2 },
-        { text: 'Ghana is bordered to the west by which country?', options: ['Togo', 'Burkina Faso', 'Côte d\'Ivoire', 'Nigeria'], correct: 2 }
-      ]
-    },
-    {
-      id: 14,
-      title: 'Internet Basics',
-      subject: 'Information and Communication Technology (ICT)',
-      questions: [
-        { text: 'What does WWW stand for?', options: ['World Wide Web', 'World Web Wide', 'Wide World Web', 'Web World Wide'], correct: 0 },
-        { text: 'Which of the following is a web browser?', options: ['Google', 'Windows', 'Chrome', 'Linux'], correct: 2 },
-        { text: 'What is an IP address?', options: ['Internet Provider', 'Internet Protocol', 'Internal Processor', 'Intranet Protocol'], correct: 1 }
-      ]
-    },
-    {
-      id: 15,
-      title: 'Figures of Speech',
-      subject: 'English Language',
-      questions: [
-        { text: 'Which figure of speech compares two things using "like" or "as"?', options: ['Metaphor', 'Simile', 'Personification', 'Hyperbole'], correct: 1 },
-        { text: 'What is "The wind whispered through the trees" an example of?', options: ['Simile', 'Metaphor', 'Personification', 'Alliteration'], correct: 2 },
-        { text: 'An exaggerated statement not meant to be taken literally is called:', options: ['Hyperbole', 'Irony', 'Oxymoron', 'Pun'], correct: 0 }
-      ]
-    },
-    {
-      id: 16,
-      title: 'French Numbers and Colors',
-      subject: 'French',
-      questions: [
-        { text: 'What is the number 10 in French?', options: ['Cinq', 'Huit', 'Dix', 'Douze'], correct: 2 },
-        { text: 'What color is "Rouge"?', options: ['Blue', 'Red', 'Green', 'Yellow'], correct: 1 },
-        { text: 'How do you say "White" in French?', options: ['Noir', 'Blanc', 'Vert', 'Jaune'], correct: 1 }
-      ]
-    },
-    {
-      id: 17,
-      title: 'Major World Religions',
-      subject: 'Religious and Moral Education (RME)',
-      questions: [
-        { text: 'What is the holy book of Islam?', options: ['Bible', 'Torah', 'Quran', 'Vedas'], correct: 2 },
-        { text: 'Who is the central figure of Christianity?', options: ['Moses', 'Muhammad', 'Jesus Christ', 'Buddha'], correct: 2 },
-        { text: 'Which religion originated in India and follows the teachings of Siddhartha Gautama?', options: ['Hinduism', 'Buddhism', 'Sikhism', 'Jainism'], correct: 1 }
-      ]
-    },
-    {
-      id: 18,
-      title: 'Basic Electronics',
-      subject: 'Design and Technology',
-      questions: [
-        { text: 'What is the unit of electrical resistance?', options: ['Volt', 'Ampere', 'Ohm', 'Watt'], correct: 2 },
-        { text: 'Which component stores electrical energy?', options: ['Resistor', 'Capacitor', 'Diode', 'Transistor'], correct: 1 },
-        { text: 'What does LED stand for?', options: ['Light Emitting Diode', 'Low Energy Device', 'Liquid Emission Display', 'Light Energy Diode'], correct: 0 }
-      ]
-    },
-    {
-      id: 19,
-      title: 'Rules of Football (Soccer)',
-      subject: 'Physical Education and Health (PEH)',
-      questions: [
-        { text: 'How many players are on a standard football team on the field?', options: ['9', '10', '11', '12'], correct: 2 },
-        { text: 'What happens when a player receives a red card?', options: ['Warning', 'Free kick', 'Sent off the field', 'Penalty'], correct: 2 },
-        { text: 'How long is a standard professional football match (excluding extra time)?', options: ['60 minutes', '80 minutes', '90 minutes', '120 minutes'], correct: 2 }
-      ]
-    },
-    {
-      id: 20,
-      title: 'Ewe Culture and Traditions',
-      subject: 'Ghanaian Language and Culture',
-      questions: [
-        { text: 'Which region in Ghana is predominantly inhabited by the Ewe people?', options: ['Ashanti', 'Volta', 'Northern', 'Western'], correct: 1 },
-        { text: 'What is a popular traditional dance of the Ewe people?', options: ['Adowa', 'Agbadza', 'Kpanlogo', 'Bamaya'], correct: 1 },
-        { text: 'What is the staple food often associated with the Volta Region?', options: ['Fufu', 'Banku', 'Akple', 'Kenkey'], correct: 2 }
-      ]
-    }
-  ];
+  // Teacher State
+  const [showCreate, setShowCreate] = useState(false);
+  const [newQuiz, setNewQuiz] = useState({ title: '', subject: 'Mathematics' });
+  const [newQuestions, setNewQuestions] = useState([{ text: '', options: ['', '', '', ''], correct: 0 }]);
 
+  // ==============================
+  // STUDENT METHODS
+  // ==============================
   const handleStartQuiz = (quiz: any) => {
     setActiveQuiz(quiz);
     setCurrentQuestion(0);
@@ -238,6 +70,242 @@ export const Quizzes = () => {
     return score;
   };
 
+  // ==============================
+  // TEACHER METHODS
+  // ==============================
+  const handleAddQuestion = () => {
+    setNewQuestions([...newQuestions, { text: '', options: ['', '', '', ''], correct: 0 }]);
+  };
+
+  const handleUpdateQuestion = (index: number, field: string, value: any) => {
+    const updated = [...newQuestions];
+    if (field === 'text') updated[index].text = value;
+    if (field === 'correct') updated[index].correct = value;
+    setNewQuestions(updated);
+  };
+
+  const handleUpdateOption = (qIndex: number, oIndex: number, value: string) => {
+    const updated = [...newQuestions];
+    updated[qIndex].options[oIndex] = value;
+    setNewQuestions(updated);
+  };
+
+  const handleSaveQuiz = (e: React.FormEvent) => {
+    e.preventDefault();
+    const finalQuiz = {
+      id: Date.now(),
+      title: newQuiz.title,
+      subject: newQuiz.subject,
+      questions: newQuestions
+    };
+    setQuizzes([finalQuiz, ...quizzes]);
+    setShowCreate(false);
+    setNewQuiz({ title: '', subject: 'Mathematics' });
+    setNewQuestions([{ text: '', options: ['', '', '', ''], correct: 0 }]);
+  };
+
+
+  // ==============================
+  // RENDER TEACHER/ADMIN VIEW
+  // ==============================
+  if (user?.role === 'Teacher' || user?.role === 'Admin') {
+    if (showCreate) {
+      return (
+        <div className="max-w-4xl mx-auto space-y-8">
+           <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <Settings className="w-8 h-8 text-purple-600" />
+              Create New Quiz
+            </h1>
+            <button 
+              onClick={() => setShowCreate(false)}
+              className="text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-xl transition-colors font-medium border border-gray-200"
+            >
+              Cancel
+            </button>
+          </div>
+
+          <form onSubmit={handleSaveQuiz} className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Quiz Title</label>
+                <input 
+                  type="text" 
+                  value={newQuiz.title}
+                  onChange={(e) => setNewQuiz({ ...newQuiz, title: e.target.value })}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Subject</label>
+                <select 
+                  value={newQuiz.subject}
+                  onChange={(e) => setNewQuiz({ ...newQuiz, subject: e.target.value })}
+                  className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                >
+                  <option>Mathematics</option>
+                  <option>Integrated Science</option>
+                  <option>English Language</option>
+                  <option>Social Studies</option>
+                </select>
+              </div>
+            </div>
+
+            <div className="border-t border-gray-100 pt-6 space-y-8">
+              <h3 className="font-bold text-lg text-gray-900">Questions</h3>
+              
+              {newQuestions.map((q, qIndex) => (
+                <div key={qIndex} className="p-6 bg-gray-50 rounded-2xl border border-gray-200 space-y-4">
+                  <div className="flex justify-between items-center">
+                    <span className="font-medium text-purple-700">Question {qIndex + 1}</span>
+                    {qIndex > 0 && (
+                      <button 
+                        type="button" 
+                        onClick={() => setNewQuestions(newQuestions.filter((_, i) => i !== qIndex))}
+                        className="text-red-500 hover:text-red-700 text-sm font-medium"
+                      >
+                        Remove
+                      </button>
+                    )}
+                  </div>
+                  
+                  <input 
+                    type="text" 
+                    placeholder="Enter question text..."
+                    value={q.text}
+                    onChange={(e) => handleUpdateQuestion(qIndex, 'text', e.target.value)}
+                    className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    required
+                  />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    {q.options.map((opt, oIndex) => (
+                      <div key={oIndex} className="flex items-center gap-3">
+                        <input 
+                          type="radio" 
+                          name={`correct-${qIndex}`}
+                          checked={q.correct === oIndex}
+                          onChange={() => handleUpdateQuestion(qIndex, 'correct', oIndex)}
+                          className="w-5 h-5 text-purple-600 focus:ring-purple-500"
+                        />
+                        <input 
+                          type="text" 
+                          placeholder={`Option ${oIndex + 1}`}
+                          value={opt}
+                          onChange={(e) => handleUpdateOption(qIndex, oIndex, e.target.value)}
+                          className={`w-full bg-white border rounded-xl px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500 ${q.correct === oIndex ? 'border-purple-300 bg-purple-50' : 'border-gray-200'}`}
+                          required
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              <button 
+                type="button"
+                onClick={handleAddQuestion}
+                className="w-full py-4 border-2 border-dashed border-gray-300 rounded-2xl text-gray-500 hover:border-purple-400 hover:text-purple-600 hover:bg-purple-50 transition-all font-medium flex items-center justify-center gap-2"
+              >
+                <Plus className="w-5 h-5" /> Add Another Question
+              </button>
+            </div>
+
+            <div className="flex justify-end pt-4 border-t border-gray-100">
+              <button 
+                type="submit" 
+                className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-xl font-medium transition-colors"
+              >
+                Publish Quiz
+              </button>
+            </div>
+          </form>
+        </div>
+      );
+    }
+
+    // Teacher Manage Quizzes Dashboard
+    return (
+      <div className="max-w-6xl mx-auto space-y-8">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+              <BrainCircuit className="w-8 h-8 text-purple-600" />
+              Manage Quizzes
+            </h1>
+            <p className="text-gray-500 mt-1">Create and monitor assessments for your students.</p>
+          </div>
+          <button 
+            onClick={() => setShowCreate(true)}
+            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            Create New Quiz
+          </button>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex gap-4 items-center">
+            <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
+              <BrainCircuit className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 font-medium">Active Quizzes</div>
+              <div className="text-2xl font-bold">{quizzes.length}</div>
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex gap-4 items-center">
+            <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
+              <Users className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 font-medium">Total Participants</div>
+              <div className="text-2xl font-bold">142</div>
+            </div>
+          </div>
+          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex gap-4 items-center">
+            <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
+              <Award className="w-6 h-6" />
+            </div>
+            <div>
+              <div className="text-sm text-gray-500 font-medium">Average Score</div>
+              <div className="text-2xl font-bold">76%</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="p-6 border-b border-gray-100">
+            <h2 className="font-bold text-lg text-gray-900">Your Published Quizzes</h2>
+          </div>
+          <div className="divide-y divide-gray-50">
+            {quizzes.map((quiz) => (
+              <div key={quiz.id} className="p-6 flex items-center justify-between hover:bg-gray-50 transition-colors">
+                <div>
+                  <h3 className="font-bold text-gray-900">{quiz.title}</h3>
+                  <div className="flex items-center gap-3 mt-1 text-sm text-gray-500">
+                    <span className="bg-purple-50 text-purple-700 px-2.5 py-0.5 rounded-md font-medium text-xs">
+                      {quiz.subject}
+                    </span>
+                    <span>{quiz.questions.length} Questions</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button className="text-blue-600 hover:text-blue-700 font-medium text-sm">View Analytics</button>
+                  <button className="text-gray-400 hover:text-gray-600"><Settings className="w-5 h-5"/></button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ==============================
+  // RENDER STUDENT VIEW (Taking Quizzes)
+  // ==============================
   if (activeQuiz) {
     if (showResults) {
       const score = calculateScore();
@@ -311,7 +379,7 @@ export const Quizzes = () => {
               <button
                 key={index}
                 onClick={() => handleAnswer(index)}
-                className={`w-full text-left p-4 rounded-xl border-2 transition-all ${answers[currentQuestion] === index ? 'border-blue-600 bg-blue-50 text-blue-700 font-medium' : 'border-gray-100 hover:border-blue-200 text-gray-700'}`}
+                className={`w-full text-left p-4 rounded-xl border-2 transition-all ${answers[currentQuestion] === index ? 'border-purple-600 bg-purple-50 text-purple-700 font-medium' : 'border-gray-100 hover:border-purple-200 text-gray-700'}`}
               >
                 {opt}
               </button>
@@ -322,7 +390,7 @@ export const Quizzes = () => {
             <button 
               onClick={handleNext}
               disabled={answers[currentQuestion] === undefined}
-              className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-xl font-medium transition-colors disabled:opacity-50"
+              className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-3 rounded-xl font-medium transition-colors disabled:opacity-50"
             >
               {currentQuestion === activeQuiz.questions.length - 1 ? 'Finish Quiz' : 'Next Question'}
             </button>
@@ -332,6 +400,7 @@ export const Quizzes = () => {
     );
   }
 
+  // Student Default Quizzes View
   return (
     <div className="max-w-6xl mx-auto space-y-8">
       <div className="flex items-center gap-4 mb-8">
@@ -340,13 +409,13 @@ export const Quizzes = () => {
         </div>
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Practice Quizzes</h1>
-          <p className="text-gray-500 mt-1">Test your knowledge and track your progress.</p>
+          <p className="text-gray-500 mt-1">Test your knowledge, complete assigned quizzes, and track progress.</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {quizzes.map((quiz) => (
-          <div key={quiz.id} className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-blue-200 hover:shadow-md transition-all flex flex-col">
+          <div key={quiz.id} className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-purple-200 hover:shadow-md transition-all flex flex-col">
             <div className="flex items-center gap-2 mb-4">
               <span className="px-2.5 py-1 bg-purple-50 text-purple-700 rounded-md text-xs font-semibold uppercase tracking-wider">
                 {quiz.subject}
@@ -358,12 +427,17 @@ export const Quizzes = () => {
             <h3 className="text-xl font-bold text-gray-900 mb-6">{quiz.title}</h3>
             <button 
               onClick={() => handleStartQuiz(quiz)}
-              className="mt-auto w-full py-3 bg-gray-50 hover:bg-blue-50 text-gray-700 hover:text-blue-700 rounded-xl font-medium transition-colors border border-gray-200 hover:border-blue-200"
+              className="mt-auto w-full py-3 bg-gray-50 hover:bg-purple-50 text-gray-700 hover:text-purple-700 rounded-xl font-medium transition-colors border border-gray-200 hover:border-purple-200"
             >
-              Start Quiz
+              Take Quiz
             </button>
           </div>
         ))}
+        {quizzes.length === 0 && (
+          <div className="col-span-full text-center py-12 text-gray-500">
+            No quizzes available at the moment. Check back later!
+          </div>
+        )}
       </div>
     </div>
   );

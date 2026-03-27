@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import api from '../api/axios.ts';
 import { useAuth } from '../context/AuthContext.tsx';
-import { MessageSquare, ThumbsUp, Bookmark, Calendar, User, Tag, Paperclip, Download, FileText, Star, Youtube, PlayCircle } from 'lucide-react';
+import { MessageSquare, ThumbsUp, Bookmark, Calendar, User, Tag, Paperclip, Download, FileText, Star, Youtube, PlayCircle, Check, XCircle } from 'lucide-react';
 
 export const ArticleView = () => {
   const { id } = useParams();
@@ -46,6 +46,17 @@ export const ArticleView = () => {
     }
   };
 
+  const handleReviewAction = async (action: 'approve' | 'reject') => {
+    try {
+      await api.put(`/articles/${id}/${action}`);
+      setArticle({ ...article, status: action === 'approve' ? 'Approved' : 'Rejected' });
+      alert(`Article successfully ${action}d!`);
+    } catch (error) {
+      console.error(`Error ${action}ing article`, error);
+      alert(`Error updating article status.`);
+    }
+  };
+
   if (!article) return <div className="p-8 text-center text-gray-500">Loading...</div>;
 
   const userRating = article.ratings?.find((r: any) => r.user === user?._id)?.value || 0;
@@ -72,6 +83,23 @@ export const ArticleView = () => {
         </div>
 
         <h1 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">{article.title}</h1>
+        
+        {article.status === 'Pending' && (user?.role === 'Admin' || user?.role === 'Teacher') && (
+          <div className="mb-8 p-6 bg-yellow-50 rounded-2xl border border-yellow-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div>
+              <h3 className="font-bold text-yellow-800 text-lg">Pending Review</h3>
+              <p className="text-yellow-700 mt-1 text-sm">Please review the content and attachments below before approving.</p>
+            </div>
+            <div className="flex gap-3 w-full sm:w-auto">
+              <button onClick={() => handleReviewAction('approve')} className="flex-1 sm:flex-none px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-medium rounded-xl transition-colors flex justify-center items-center gap-2">
+                <Check className="w-5 h-5" /> Approve
+              </button>
+              <button onClick={() => handleReviewAction('reject')} className="flex-1 sm:flex-none px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-colors flex justify-center items-center gap-2">
+                <XCircle className="w-5 h-5" /> Reject
+              </button>
+            </div>
+          </div>
+        )}
         
         <div className="flex items-center justify-between py-6 border-y border-gray-100 mb-8">
           <div className="flex items-center gap-4">

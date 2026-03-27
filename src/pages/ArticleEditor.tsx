@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Editor from 'react-simple-wysiwyg';
 import api from '../api/axios.ts';
 import { Upload, X, Youtube, Plus, FileText, Video } from 'lucide-react';
 
@@ -105,9 +106,11 @@ export const ArticleEditor = () => {
           'Content-Type': 'multipart/form-data'
         }
       });
-      navigate('/articles');
+      alert(submitForReview ? 'Successfully submitted for review!' : 'Draft saved successfully!');
+      navigate('/submissions');
     } catch (error) {
       console.error('Error saving article', error);
+      alert('Error saving article, please try again.');
     }
   };
 
@@ -166,7 +169,10 @@ export const ArticleEditor = () => {
               <select 
                 className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none bg-white"
                 value={subject}
-                onChange={(e) => setSubject(e.target.value)}
+                onChange={(e) => {
+                  setSubject(e.target.value);
+                  setTopic(''); // Reset topic when subject changes
+                }}
                 required
               >
                 <option value="">Select Subject</option>
@@ -206,14 +212,13 @@ export const ArticleEditor = () => {
             <>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Content</label>
-                <textarea
-                  required={creationType === 'article'}
-                  className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-y font-mono text-sm"
-                  rows={15}
-                  placeholder="Write your article content here... (HTML supported)"
-                  value={content}
-                  onChange={(e) => setContent(e.target.value)}
-                ></textarea>
+                <div className="bg-white rounded-xl overflow-hidden border border-gray-200">
+                  <Editor
+                    value={content}
+                    onChange={(e: any) => setContent(e.target.value)}
+                    className="h-64 bg-white"
+                  />
+                </div>
               </div>
 
               <div>

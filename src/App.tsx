@@ -30,6 +30,7 @@ import { Support } from './pages/Support.tsx';
 
 import { Chatbot } from './pages/Chatbot.tsx';
 import { Feedback } from './pages/Feedback.tsx';
+import { MySubmissions } from './pages/MySubmissions.tsx';
 
 export default function App() {
   return (
@@ -54,6 +55,7 @@ export default function App() {
             <Route path="search" element={<SearchResults />} />
             <Route path="chatbot" element={<Chatbot />} />
             <Route path="feedback" element={<Feedback />} />
+            <Route path="submissions" element={<MySubmissions />} />
             <Route path="quizzes" element={<Quizzes />} />
             <Route path="assignments" element={<Assignments />} />
             <Route path="assignments/:id" element={<AssignmentView />} />

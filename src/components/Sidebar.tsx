@@ -48,7 +48,8 @@ export const Sidebar = () => {
           <span>Resources</span>
         </NavLink>
 
-        {user?.role !== 'Admin' && (
+        {/* Student Only Links */}
+        {user?.role === 'Student' && (
           <>
             <NavLink to="/chatbot" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
               <MessageCircle className="w-5 h-5" />
@@ -57,12 +58,27 @@ export const Sidebar = () => {
 
             <NavLink to="/quizzes" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
               <BrainCircuit className="w-5 h-5" />
-              <span>Quizzes</span>
+              <span>Take Quizzes</span>
             </NavLink>
 
             <NavLink to="/assignments" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
               <FileText className="w-5 h-5" />
-              <span>Assignments</span>
+              <span>My Assignments</span>
+            </NavLink>
+          </>
+        )}
+
+        {/* Teacher / Admin Only Links */}
+        {(user?.role === 'Teacher' || user?.role === 'Admin') && (
+          <>
+            <NavLink to="/quizzes" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+              <BrainCircuit className="w-5 h-5" />
+              <span>Manage Quizzes</span>
+            </NavLink>
+
+            <NavLink to="/assignments" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+              <FileText className="w-5 h-5" />
+              <span>Manage Assignments</span>
             </NavLink>
           </>
         )}
@@ -82,7 +98,12 @@ export const Sidebar = () => {
           <span>Feedback</span>
         </NavLink>
 
-        {(user?.role === 'Admin' || user?.role === 'Teacher') && (
+        <NavLink to="/submissions" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+          <CheckSquare className="w-5 h-5" />
+          <span>My Submissions</span>
+        </NavLink>
+
+        {user?.role === 'Admin' && (
           <NavLink to="/review" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
             <CheckSquare className="w-5 h-5" />
             <span>Review Queue</span>
