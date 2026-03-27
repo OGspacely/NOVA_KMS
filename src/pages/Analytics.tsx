@@ -30,8 +30,8 @@ export const Analytics = () => {
   const roleData = {
     Admin: {
       pillStats: [
-        { label: 'Total Users', value: '1,204', color: 'bg-[#2A2A2A] text-white' },
-        { label: 'Active', value: '890', color: 'bg-[#FDE047] text-black' },
+        { label: 'Total Users', value: '1,204', color: 'bg-blue-600 text-white shadow-md' },
+        { label: 'Active', value: '890', color: 'bg-indigo-100 text-indigo-700' },
         { label: 'Content', value: '456', color: 'bg-white text-black border border-gray-200' },
         { label: 'Uptime', value: '99.9%', color: 'bg-white text-black border border-gray-200' },
       ],
@@ -55,8 +55,8 @@ export const Analytics = () => {
       trackerSubtitle: 'Approved vs Rejected',
       barsTitle: 'Content by Subject',
       bars: [
-        { label: 'Science', value: 40, color: 'bg-[#FDE047]' },
-        { label: 'Math', value: 35, color: 'bg-[#2A2A2A]' },
+        { label: 'Science', value: 40, color: 'bg-indigo-100 text-indigo-700' },
+        { label: 'Math', value: 35, color: 'bg-blue-600 text-white' },
         { label: 'History', value: 25, color: 'bg-gray-300' },
       ],
       tasksTitle: 'Admin Actions',
@@ -69,8 +69,8 @@ export const Analytics = () => {
     },
     Teacher: {
       pillStats: [
-        { label: 'Materials', value: '45', color: 'bg-[#2A2A2A] text-white' },
-        { label: 'Views', value: '1.2k', color: 'bg-[#FDE047] text-black' },
+        { label: 'Materials', value: '45', color: 'bg-blue-600 text-white shadow-md' },
+        { label: 'Views', value: '1.2k', color: 'bg-indigo-100 text-indigo-700' },
         { label: 'Downloads', value: '340', color: 'bg-white text-black border border-gray-200' },
         { label: 'Pending', value: '3', color: 'bg-white text-black border border-gray-200' },
       ],
@@ -94,8 +94,8 @@ export const Analytics = () => {
       trackerSubtitle: 'Across all subjects',
       barsTitle: 'Content Performance',
       bars: [
-        { label: 'Most Viewed', value: 45, color: 'bg-[#FDE047]' },
-        { label: 'Average', value: 35, color: 'bg-[#2A2A2A]' },
+        { label: 'Most Viewed', value: 45, color: 'bg-indigo-100 text-indigo-700' },
+        { label: 'Average', value: 35, color: 'bg-blue-600 text-white' },
         { label: 'Least Accessed', value: 20, color: 'bg-gray-300' },
       ],
       tasksTitle: 'Content Status',
@@ -108,8 +108,8 @@ export const Analytics = () => {
     },
     Student: {
       pillStats: [
-        { label: 'Study Time', value: '15h', color: 'bg-[#2A2A2A] text-white' },
-        { label: 'Quizzes', value: '80%', color: 'bg-[#FDE047] text-black' },
+        { label: 'Study Time', value: '15h', color: 'bg-blue-600 text-white shadow-md' },
+        { label: 'Quizzes', value: '80%', color: 'bg-indigo-100 text-indigo-700' },
         { label: 'Assignments', value: '100%', color: 'bg-white text-black border border-gray-200' },
         { label: 'Forum', value: '5', color: 'bg-white text-black border border-gray-200' },
       ],
@@ -133,8 +133,8 @@ export const Analytics = () => {
       trackerSubtitle: 'Study Time',
       barsTitle: 'Course Progress',
       bars: [
-        { label: 'Course 1', value: 40, color: 'bg-[#FDE047]' },
-        { label: 'Course 2', value: 35, color: 'bg-[#2A2A2A]' },
+        { label: 'Course 1', value: 40, color: 'bg-indigo-100 text-indigo-700' },
+        { label: 'Course 2', value: 35, color: 'bg-blue-600 text-white' },
         { label: 'Course 3', value: 25, color: 'bg-gray-300' },
       ],
       tasksTitle: 'Student Tasks',
@@ -192,9 +192,12 @@ export const Analytics = () => {
         {/* Header Section */}
         <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-12 gap-8">
           <div className="flex-1">
-            <div className="flex items-center justify-between mb-8">
-              <h1 className="text-4xl lg:text-5xl font-light text-gray-900">
-                Welcome in, <span className="font-semibold">{user?.name?.split(' ')[0] || 'User'}</span>
+            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
+              <h1 className="text-4xl lg:text-5xl font-light text-gray-900 flex items-center gap-4">
+                <div>Welcome in, <span className="font-semibold">{user?.name?.split(' ')[0] || 'User'}</span></div>
+                <span className="hidden md:inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-indigo-50 text-indigo-700 border border-indigo-100 shadow-sm">
+                  {user?.role || 'Student'} View
+                </span>
               </h1>
               
               {/* Time Range Filter */}
@@ -252,31 +255,31 @@ export const Analytics = () => {
         </div>
 
         {/* Main Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-6">
           
           {/* Left Column (Profile & List) */}
-          <div className="lg:col-span-3 space-y-6">
+          <div className="md:col-span-1 xl:col-span-3 space-y-6 flex flex-col">
             {/* Profile Card */}
-            <div className="bg-white/40 backdrop-blur-xl rounded-[32px] p-5 border border-white/60 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow cursor-pointer">
+            <div className="bg-white/40 backdrop-blur-xl rounded-[32px] p-4 border border-white/60 shadow-sm relative overflow-hidden group hover:shadow-md transition-shadow cursor-pointer">
               <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/60 z-0"></div>
               <img 
                 src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.name || 'User'}&backgroundColor=b6e3f4`}
                 alt="Profile"
-                className="w-full h-64 object-cover rounded-2xl mb-4 relative z-10 transform group-hover:scale-105 transition-transform duration-500"
+                className="w-full aspect-[4/3] object-cover rounded-2xl mb-2 relative z-10 transform group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute bottom-5 left-5 right-5 z-10 flex justify-between items-end">
+              <div className="absolute bottom-4 left-4 right-4 z-10 flex justify-between items-end">
                 <div>
                   <h3 className="text-white font-semibold text-xl">{user?.name}</h3>
-                  <p className="text-white/80 text-sm">{user?.role}</p>
+                  <p className="text-white/90 text-sm font-medium">{user?.role}</p>
                 </div>
-                <div className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 text-white text-sm font-medium">
+                <div className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full border border-white/30 text-white text-xs font-semibold uppercase tracking-wider">
                   {currentData.profileBadge}
                 </div>
               </div>
             </div>
             
             {/* Accordion List */}
-            <div className="bg-white/40 backdrop-blur-xl rounded-[32px] p-6 border border-white/60 shadow-sm space-y-2">
+            <div className="bg-white/40 backdrop-blur-xl rounded-[32px] p-6 border border-white/60 shadow-sm space-y-2 flex-1">
               <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">
                 {user?.role === 'Admin' ? 'System Alerts' : user?.role === 'Teacher' ? 'Notifications' : 'Quick Links'}
               </h3>
@@ -293,9 +296,9 @@ export const Analytics = () => {
           </div>
 
           {/* Center Column (Charts) */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="md:col-span-1 xl:col-span-5 space-y-6 flex flex-col">
             {/* Progress Bar Chart */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[32px] p-8 border border-white/60 shadow-sm h-[320px] flex flex-col hover:shadow-md transition-shadow">
+            <div className="bg-white/60 backdrop-blur-xl rounded-[32px] p-6 lg:p-8 border border-white/60 shadow-sm min-h-[320px] flex flex-col hover:shadow-md transition-shadow">
               <div className="flex justify-between items-start mb-8">
                 <div>
                   <h3 className="text-lg font-medium text-gray-800">{currentData.progressTitle}</h3>
@@ -319,7 +322,7 @@ export const Analytics = () => {
                     <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fill: '#9CA3AF', fontSize: 12 }} dy={10} />
                     <Bar dataKey="value" radius={[4, 4, 4, 4]} barSize={8}>
                       {chartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={index === 3 ? '#FDE047' : '#E5E7EB'} className="hover:opacity-80 transition-opacity cursor-pointer" />
+                        <Cell key={`cell-${index}`} fill={index === 3 ? '#4f46e5' : '#e0e7ff'} className="hover:opacity-80 transition-opacity cursor-pointer" />
                       ))}
                     </Bar>
                   </BarChart>
@@ -328,7 +331,7 @@ export const Analytics = () => {
             </div>
 
             {/* Time Tracker */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[32px] p-8 border border-white/60 shadow-sm h-[320px] flex flex-col relative overflow-hidden hover:shadow-md transition-shadow">
+            <div className="bg-white/60 backdrop-blur-xl rounded-[32px] p-6 lg:p-8 border border-white/60 shadow-sm min-h-[320px] flex flex-col relative overflow-hidden hover:shadow-md transition-shadow flex-1">
               <div className="flex justify-between items-start z-10">
                 <h3 className="text-lg font-medium text-gray-800">{currentData.trackerTitle}</h3>
                 <button className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 hover:bg-gray-50 transition-colors">
@@ -336,11 +339,14 @@ export const Analytics = () => {
                 </button>
               </div>
 
-              <div className="flex-1 flex flex-col items-center justify-center z-10">
+              <div className="flex-1 flex flex-col items-center justify-center z-10 py-4">
                 <div className="relative w-48 h-48 flex items-center justify-center group cursor-pointer">
                   {/* Circular dashed border simulation */}
                   <svg className="absolute inset-0 w-full h-full transform group-hover:scale-105 transition-transform duration-500" viewBox="0 0 100 100">
-                    <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#FDE047" strokeWidth="8" strokeDasharray="10 5" strokeLinecap="round" />
+                    {/* Background Arc */}
+                    <path d="M 15 80 A 45 45 0 1 1 85 80" fill="none" stroke="#E5E7EB" strokeWidth="6" strokeLinecap="round" />
+                    {/* Foreground Arc */}
+                    <path d="M 15 80 A 45 45 0 1 1 85 80" fill="none" stroke="#4f46e5" strokeWidth="6" strokeDasharray="10 6" strokeLinecap="round" />
                   </svg>
                   <div className="text-center mt-4">
                     <div className="text-4xl font-light text-gray-900">{currentData.trackerTime}</div>
@@ -349,30 +355,30 @@ export const Analytics = () => {
                 </div>
               </div>
 
-              <div className="flex justify-center gap-4 mt-4 z-10">
-                <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 text-gray-600 hover:bg-gray-50 hover:scale-105 transition-all">
-                  <Play className="w-4 h-4 ml-1" />
+              <div className="flex justify-center gap-4 mt-2 z-10">
+                <button className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 text-gray-600 hover:bg-gray-50 hover:scale-105 transition-all">
+                  <Play className="w-5 h-5 ml-1" />
                 </button>
-                <button className="w-10 h-10 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 text-gray-600 hover:bg-gray-50 hover:scale-105 transition-all">
-                  <Pause className="w-4 h-4" />
+                <button className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 text-gray-600 hover:bg-gray-50 hover:scale-105 transition-all">
+                  <Pause className="w-5 h-5" />
                 </button>
-                <button className="w-10 h-10 rounded-full bg-[#2A2A2A] flex items-center justify-center shadow-sm text-white hover:bg-black hover:scale-105 transition-all ml-auto">
-                  <Clock className="w-4 h-4" />
+                <button className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center shadow-sm text-white hover:bg-blue-700 hover:scale-105 transition-all ml-auto">
+                  <Clock className="w-5 h-5" />
                 </button>
               </div>
             </div>
           </div>
 
           {/* Right Column (Onboarding & Tasks) */}
-          <div className="lg:col-span-4 space-y-6">
+          <div className="md:col-span-2 xl:col-span-4 space-y-6 flex flex-col">
             {/* Onboarding Bars */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[32px] p-8 border border-white/60 shadow-sm h-[320px] hover:shadow-md transition-shadow">
+            <div className="bg-white/60 backdrop-blur-xl rounded-[32px] p-6 lg:p-8 border border-white/60 shadow-sm min-h-[320px] hover:shadow-md transition-shadow">
               <div className="flex justify-between items-end mb-8">
                 <h3 className="text-lg font-medium text-gray-800">{currentData.barsTitle}</h3>
                 <span className="text-4xl font-light text-gray-900">18%</span>
               </div>
               
-              <div className="flex gap-4 mt-6">
+              <div className="flex flex-wrap gap-4 mt-6 justify-center">
                 {currentData.bars.map((bar, idx) => (
                   <div key={idx} className="flex flex-col items-center gap-4 flex-1">
                     <div className={`w-14 h-14 rounded-full flex items-center justify-center text-xs font-medium text-center leading-tight shadow-sm ${bar.color} ${bar.color.includes('bg-gray-300') ? 'text-transparent' : ''}`}>
@@ -391,7 +397,7 @@ export const Analytics = () => {
             </div>
 
             {/* Dark Task Card */}
-            <div className="bg-[#2A2A2A] rounded-[32px] p-8 text-white shadow-xl h-[320px] flex flex-col">
+            <div className="bg-gradient-to-br from-gray-900 to-blue-900 rounded-[32px] p-6 lg:p-8 text-white shadow-xl min-h-[320px] flex flex-col flex-1">
               <div className="flex justify-between items-center mb-8">
                 <h3 className="text-lg font-medium text-white/90">{currentData.tasksTitle}</h3>
                 <span className="text-3xl font-light text-white">
@@ -408,7 +414,7 @@ export const Analytics = () => {
                       onClick={() => toggleTask(idx)}
                       className="flex items-start gap-4 p-3 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group"
                     >
-                      <div className={`mt-1 flex-shrink-0 transition-colors ${isDone ? 'text-[#FDE047]' : 'text-gray-500 group-hover:text-gray-400'}`}>
+                      <div className={`mt-1 flex-shrink-0 transition-colors ${isDone ? 'text-blue-400' : 'text-gray-500 group-hover:text-gray-400'}`}>
                         {isDone ? <CheckCircle2 className="w-5 h-5" /> : <Circle className="w-5 h-5" />}
                       </div>
                       <div className="flex-1 min-w-0">

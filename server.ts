@@ -13,6 +13,8 @@ import userRoutes from './server/routes/users.ts';
 import forumRoutes from './server/routes/forum.ts';
 import assignmentRoutes from './server/routes/assignments.ts';
 import announcementRoutes from './server/routes/announcements.ts';
+import feedbackRoutes from './server/routes/feedback.ts';
+import { notificationRoutes } from './server/routes/notifications.ts';
 
 async function startServer() {
   const app = express();
@@ -39,6 +41,8 @@ async function startServer() {
   app.use('/api/forum', forumRoutes);
   app.use('/api/assignments', assignmentRoutes);
   app.use('/api/announcements', announcementRoutes);
+  app.use('/api/feedback', feedbackRoutes);
+  app.use('/api/notifications', notificationRoutes);
 
   // Health check
   app.get('/api/health', (req, res) => {

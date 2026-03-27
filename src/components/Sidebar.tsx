@@ -50,9 +50,9 @@ export const Sidebar = () => {
 
         {user?.role !== 'Admin' && (
           <>
-            <NavLink to="/forum" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+            <NavLink to="/chatbot" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
               <MessageCircle className="w-5 h-5" />
-              <span>Q&A Forum</span>
+              <span>AI Assistant</span>
             </NavLink>
 
             <NavLink to="/quizzes" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
@@ -75,6 +75,11 @@ export const Sidebar = () => {
         <NavLink to="/editor" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
           <FileText className="w-5 h-5" />
           <span>{user?.role === 'Student' ? 'Contribute' : 'Create Article'}</span>
+        </NavLink>
+
+        <NavLink to="/feedback" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+          <MessageCircle className="w-5 h-5" />
+          <span>Feedback</span>
         </NavLink>
 
         {(user?.role === 'Admin' || user?.role === 'Teacher') && (

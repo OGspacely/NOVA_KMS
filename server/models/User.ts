@@ -12,6 +12,13 @@ const userSchema = new mongoose.Schema({
   reputation: { type: Number, default: 0 },
   isActive: { type: Boolean, default: true },
   isVerified: { type: Boolean, default: false },
+  profilePicture: { type: String },
+  preferences: {
+    darkMode: { type: Boolean, default: false },
+    language: { type: String, default: 'en' },
+    emailNotifications: { type: Boolean, default: true },
+    pushNotifications: { type: Boolean, default: true }
+  }
 }, { timestamps: true });
 
 export const User = mongoose.model('User', userSchema);

@@ -1,22 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bell, CheckCircle, Clock } from 'lucide-react';
+import api from '../api/axios.ts';
 
 export const Notifications = () => {
-  const [notifications, setNotifications] = useState([
-    { id: 1, text: 'New assignment posted in Mathematics', time: '2 hours ago', unread: true, type: 'assignment' },
-    { id: 2, text: 'Your article was approved by the admin', time: '1 day ago', unread: true, type: 'article' },
-    { id: 3, text: 'New practice quiz available for Integrated Science', time: '2 days ago', unread: false, type: 'quiz' },
-    { id: 4, text: 'Your submission for "Algebra Basics" was graded', time: '3 days ago', unread: false, type: 'grade' },
-    { id: 5, text: 'New comment on your forum post', time: '1 week ago', unread: false, type: 'forum' },
-  ]);
+  const [notifications, setNotifications] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, unread: false })));
+  useEffect(() => {
+    fetchNotifications();
+  }, []);
+
+  const fetchNotifications = async () => {
+    try {
+      const res = await api.get('/notifications');
+      setNotifications(res.data);
+    } catch (error) {
+      console.error('Failed to fetch notifications', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const markAsRead = (id: number) => {
-    setNotifications(notifications.map(n => n.id === id ? { ...n, unread: false } : n));
+  const markAllAsRead = async () => {
+    try {
+      await api.put('/notifications/read-all');
+      setNotifications(notifications.map(n => ({ ...n, unread: false })));
+    } catch (error) {
+      console.error('Failed to mark all as read', error);
+    }
   };
+
+  const markAsRead = async (id: string) => {
+    try {
+      await api.put(`/notifications/${id}/read`);
+      setNotifications(notifications.map(n => n._id === id ? { ...n, unread: false } : n));
+    } catch (error) {
+      console.error('Failed to mark as read', error);
+    }
+  };
+
+  if (loading) {
+    return <div className="flex justify-center p-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div></div>;
+  }
 
   return (
     <div className="max-w-4xl mx-auto space-y-8">
@@ -38,8 +63,8 @@ export const Notifications = () => {
           <div className="divide-y divide-gray-100">
             {notifications.map(notification => (
               <div 
-                key={notification.id} 
-                onClick={() => markAsRead(notification.id)}
+                key={notification._id} 
+                onClick={() => notification.unread && markAsRead(notification._id)}
                 className={`p-6 flex items-start gap-4 transition-colors cursor-pointer hover:bg-gray-50 ${notification.unread ? 'bg-blue-50/30' : ''}`}
               >
                 <div className={`p-3 rounded-full shrink-0 ${notification.unread ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-500'}`}>
@@ -49,7 +74,7 @@ export const Notifications = () => {
                   <p className={`text-lg ${notification.unread ? 'font-semibold text-gray-900' : 'text-gray-700'}`}>
                     {notification.text}
                   </p>
-                  <span className="text-sm text-gray-500 mt-1 block">{notification.time}</span>
+                  <span className="text-sm text-gray-500 mt-1 block">{new Date(notification.createdAt).toLocaleString()}</span>
                 </div>
                 {notification.unread && (
                   <div className="w-3 h-3 bg-blue-600 rounded-full shrink-0 mt-2"></div>

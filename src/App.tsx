@@ -28,6 +28,9 @@ import { PrivacyPolicy } from './pages/PrivacyPolicy.tsx';
 import { TermsOfService } from './pages/TermsOfService.tsx';
 import { Support } from './pages/Support.tsx';
 
+import { Chatbot } from './pages/Chatbot.tsx';
+import { Feedback } from './pages/Feedback.tsx';
+
 export default function App() {
   return (
     <AuthProvider>
@@ -49,8 +52,8 @@ export default function App() {
             <Route path="settings" element={<Settings />} />
             <Route path="notifications" element={<Notifications />} />
             <Route path="search" element={<SearchResults />} />
-            <Route path="forum" element={<Forum />} />
-            <Route path="forum/:id" element={<ForumQuestion />} />
+            <Route path="chatbot" element={<Chatbot />} />
+            <Route path="feedback" element={<Feedback />} />
             <Route path="quizzes" element={<Quizzes />} />
             <Route path="assignments" element={<Assignments />} />
             <Route path="assignments/:id" element={<AssignmentView />} />

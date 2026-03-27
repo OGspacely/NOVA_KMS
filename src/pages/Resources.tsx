@@ -267,8 +267,12 @@ const PRELOADED_VIDEOS = [
 export const Resources = () => {
   const [resources, setResources] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'pdfs' | 'videos'>('pdfs');
+  const [activeTab, setActiveTab] = useState<'pdfs' | 'videos' | 'library'>('pdfs');
   const [showNotifications, setShowNotifications] = useState(false);
+  const [favorites, setFavorites] = useState<string[]>(() => {
+    const saved = localStorage.getItem('userFavorites');
+    return saved ? JSON.parse(saved) : [];
+  });
   const notificationRef = useRef<HTMLDivElement>(null);
 
   const notifications = [
@@ -440,6 +444,16 @@ export const Resources = () => {
     }
   };
 
+  const toggleFavorite = (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setFavorites(prev => {
+      const newFavs = prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id];
+      localStorage.setItem('userFavorites', JSON.stringify(newFavs));
+      return newFavs;
+    });
+  };
+
   // Combine fetched PDFs with preloaded PDFs
   const allPdfs = [...resources.filter(r => !r.isYoutube), ...PRELOADED_PDFS];
   const uniquePdfsMap = new Map();
@@ -487,10 +501,10 @@ export const Resources = () => {
             </div>
           </div>
           
-          <div className="flex bg-gray-100 p-1 rounded-xl self-start md:self-auto">
+          <div className="flex bg-gray-100 p-1 rounded-xl self-start md:self-auto overflow-x-auto">
             <button
               onClick={() => setActiveTab('pdfs')}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all ${
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all whitespace-nowrap ${
                 activeTab === 'pdfs' 
                   ? 'bg-white text-blue-600 shadow-sm' 
                   : 'text-gray-600 hover:text-gray-900'
@@ -501,7 +515,7 @@ export const Resources = () => {
             </button>
             <button
               onClick={() => setActiveTab('videos')}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all ${
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all whitespace-nowrap ${
                 activeTab === 'videos' 
                   ? 'bg-white text-red-600 shadow-sm' 
                   : 'text-gray-600 hover:text-gray-900'
@@ -509,6 +523,17 @@ export const Resources = () => {
             >
               <Youtube className="w-4 h-4" />
               Video Tutorials
+            </button>
+            <button
+              onClick={() => setActiveTab('library')}
+              className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all whitespace-nowrap ${
+                activeTab === 'library' 
+                  ? 'bg-white text-purple-600 shadow-sm' 
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Heart className="w-4 h-4" />
+              My Library
             </button>
           </div>
         </div>
@@ -524,7 +549,15 @@ export const Resources = () => {
                         {resource.isArticle ? <FileText className="w-6 h-6" /> : <FileDown className="w-6 h-6" />}
                       </div>
                       <div>
-                        <h3 className="text-lg font-bold text-gray-900 leading-tight line-clamp-2" title={resource.title}>{resource.title}</h3>
+                        <div className="flex items-start justify-between gap-2">
+                          <h3 className="text-lg font-bold text-gray-900 leading-tight line-clamp-2" title={resource.title}>{resource.title}</h3>
+                          <button 
+                            onClick={(e) => toggleFavorite(e, resource.id)}
+                            className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                          >
+                            <Heart className={`w-5 h-5 ${favorites.includes(resource.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+                          </button>
+                        </div>
                         <div className="flex items-center gap-2 mt-1">
                           <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
                             {resource.subject}
@@ -565,14 +598,25 @@ export const Resources = () => {
                       </div>
                       <span className="text-xs text-gray-500 truncate max-w-[100px]">{resource.author}</span>
                     </div>
-                    <a 
-                      href={resource.url}
-                      onClick={(e) => handleDownload(e, resource)}
-                      className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors"
-                    >
-                      <Download className="w-4 h-4" />
-                      Download
-                    </a>
+                    <div className="flex items-center gap-2">
+                      <a 
+                        href={resource.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors"
+                      >
+                        <BookOpen className="w-4 h-4" />
+                        View
+                      </a>
+                      <a 
+                        href={resource.url}
+                        onClick={(e) => handleDownload(e, resource)}
+                        className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors"
+                      >
+                        <Download className="w-4 h-4" />
+                        Download
+                      </a>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -596,7 +640,7 @@ export const Resources = () => {
                   <img src={`https://img.youtube.com/vi/${getYoutubeId(featured.url)}/maxresdefault.jpg`} onError={(e) => { (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${getYoutubeId(featured.url)}/hqdefault.jpg`; }} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
                   <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/50 to-transparent" />
                   
-                  <div className="absolute top-6 left-6 flex gap-2">
+                  <div className="absolute top-6 left-6 flex gap-2 z-10">
                     {featured.tags?.slice(0, 2).map((tag: string) => (
                       <span key={tag} className="px-4 py-1.5 bg-white/20 backdrop-blur-md text-white text-sm rounded-full border border-white/10">
                         {tag}
@@ -621,8 +665,11 @@ export const Resources = () => {
                       <button className="flex items-center gap-2 bg-[#6366f1] hover:bg-[#4f46e5] text-white px-6 py-2.5 rounded-full font-medium transition-colors">
                         <Play className="w-5 h-5 fill-current" /> Watch
                       </button>
-                      <button className="w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-colors border border-white/10">
-                        <Heart className="w-5 h-5" />
+                      <button 
+                        onClick={(e) => toggleFavorite(e, featured.id)}
+                        className="w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-colors border border-white/10 z-10"
+                      >
+                        <Heart className={`w-5 h-5 ${favorites.includes(featured.id) ? 'fill-red-500 text-red-500' : 'text-white'}`} />
                       </button>
                       
                       <div className="hidden sm:flex items-center gap-3 ml-4">
@@ -652,8 +699,11 @@ export const Resources = () => {
                         {video.rating?.toFixed(1) || '4.5'} <Star className="w-3 h-3 text-yellow-400 fill-current" />
                       </div>
                       
-                      <button className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-colors border border-white/10">
-                        <Heart className="w-4 h-4" />
+                      <button 
+                        onClick={(e) => toggleFavorite(e, video.id)}
+                        className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-colors border border-white/10 z-10"
+                      >
+                        <Heart className={`w-4 h-4 ${favorites.includes(video.id) ? 'fill-red-500 text-red-500' : 'text-white'}`} />
                       </button>
 
                       <div className="absolute bottom-0 left-0 p-5 w-full">
@@ -678,8 +728,11 @@ export const Resources = () => {
                         {video.rating?.toFixed(1) || '4.5'} <Star className="w-3 h-3 text-yellow-400 fill-current" />
                       </div>
                       
-                      <button className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-colors border border-white/10">
-                        <Heart className="w-4 h-4" />
+                      <button 
+                        onClick={(e) => toggleFavorite(e, video.id)}
+                        className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center text-white transition-colors border border-white/10 z-10"
+                      >
+                        <Heart className={`w-4 h-4 ${favorites.includes(video.id) ? 'fill-red-500 text-red-500' : 'text-white'}`} />
                       </button>
 
                       <div className="absolute bottom-0 left-0 p-5 w-full">
@@ -772,6 +825,119 @@ export const Resources = () => {
                 </div>
               </div>
             </div>
+          </div>
+        )}
+        {activeTab === 'library' && (
+          <div className="space-y-8">
+            <h2 className="text-2xl font-bold text-gray-900">My Library</h2>
+            {favorites.length === 0 ? (
+              <div className="text-center py-12 bg-gray-50 rounded-2xl border border-gray-100">
+                <Heart className="w-12 h-12 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Your library is empty</h3>
+                <p className="text-gray-500">Save your favorite documents and videos here for quick access.</p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {[...pdfs, ...videos].filter(r => favorites.includes(r.id)).map((resource) => (
+                  <div key={resource.id} className="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:border-purple-300 hover:shadow-md transition-all flex flex-col group">
+                    {resource.isYoutube ? (
+                      <>
+                        <div className="aspect-video relative overflow-hidden bg-gray-100">
+                          <img src={`https://img.youtube.com/vi/${getYoutubeId(resource.url)}/mqdefault.jpg`} onError={(e) => { (e.target as HTMLImageElement).src = `https://img.youtube.com/vi/${getYoutubeId(resource.url)}/hqdefault.jpg`; }} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition-colors flex items-center justify-center">
+                            <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center transform scale-90 group-hover:scale-100 transition-transform">
+                              <Play className="w-5 h-5 text-red-600 ml-1" />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-4 flex flex-col flex-1">
+                          <div className="flex items-start justify-between gap-2 mb-2">
+                            <h4 className="font-bold text-gray-900 leading-tight line-clamp-2 group-hover:text-purple-600 transition-colors">{resource.title}</h4>
+                            <button 
+                              onClick={(e) => toggleFavorite(e, resource.id)}
+                              className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                            >
+                              <Heart className="w-4 h-4 fill-red-500 text-red-500" />
+                            </button>
+                          </div>
+                          <p className="text-xs text-gray-500 mb-4">{resource.author}</p>
+                          <div className="mt-auto">
+                            <a 
+                              href={resource.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1.5 text-sm font-medium text-purple-600 hover:text-purple-700 bg-purple-50 hover:bg-purple-100 px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                              <PlayCircle className="w-4 h-4" />
+                              Watch Video
+                            </a>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="p-6 flex flex-col flex-1">
+                        <div className="flex items-start justify-between mb-4">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0 ${resource.isArticle ? 'bg-purple-50 text-purple-500' : 'bg-blue-50 text-blue-500'}`}>
+                              {resource.isArticle ? <FileText className="w-6 h-6" /> : <FileDown className="w-6 h-6" />}
+                            </div>
+                            <div>
+                              <div className="flex items-start justify-between gap-2">
+                                <h3 className="text-lg font-bold text-gray-900 leading-tight line-clamp-2" title={resource.title}>{resource.title}</h3>
+                                <button 
+                                  onClick={(e) => toggleFavorite(e, resource.id)}
+                                  className="p-1 hover:bg-gray-100 rounded-full transition-colors flex-shrink-0"
+                                >
+                                  <Heart className="w-5 h-5 fill-red-500 text-red-500" />
+                                </button>
+                              </div>
+                              <div className="flex items-center gap-2 mt-1">
+                                <span className="text-xs font-semibold uppercase tracking-wider text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">
+                                  {resource.subject}
+                                </span>
+                                <span className="text-xs text-gray-500">{resource.type}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        <p className="text-gray-600 text-sm mb-6 flex-1 line-clamp-3" title={resource.description}>
+                          {resource.description}
+                        </p>
+                        
+                        <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-100">
+                          <div className="flex items-center gap-2">
+                            <div className="w-6 h-6 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
+                              {resource.author.charAt(0)}
+                            </div>
+                            <span className="text-xs text-gray-500 truncate max-w-[100px]">{resource.author}</span>
+                          </div>
+                          <div className="flex items-center gap-2">
+                            <a 
+                              href={resource.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-900 bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                              <BookOpen className="w-4 h-4" />
+                              View
+                            </a>
+                            <a 
+                              href={resource.url}
+                              onClick={(e) => handleDownload(e, resource)}
+                              className="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors"
+                            >
+                              <Download className="w-4 h-4" />
+                              Download
+                            </a>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

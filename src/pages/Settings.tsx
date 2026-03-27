@@ -5,13 +5,18 @@ import { User as UserIcon, Star, Save, LogOut, Bell, Shield, Moon, Globe } from 
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export const Settings = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [profile, setProfile] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState(location.state?.tab || 'profile');
+  const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [passwordSaving, setPasswordSaving] = useState(false);
+  const [passwordError, setPasswordError] = useState('');
+  const [passwordSuccess, setPasswordSuccess] = useState('');
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   
   useEffect(() => {
     if (location.state?.tab) {
@@ -46,6 +51,19 @@ export const Settings = () => {
           skills: res.data.skills?.join(', ') || '',
           interests: res.data.interests?.join(', ') || ''
         });
+        if (res.data.preferences) {
+          setSystemSettings({
+            emailNotifications: res.data.preferences.emailNotifications ?? true,
+            pushNotifications: res.data.preferences.pushNotifications ?? false,
+            darkMode: res.data.preferences.darkMode ?? false,
+            language: res.data.preferences.language ?? 'en'
+          });
+          if (res.data.preferences.darkMode) {
+            document.documentElement.classList.add('dark');
+          } else {
+            document.documentElement.classList.remove('dark');
+          }
+        }
       } catch (error) {
         console.error('Error fetching profile', error);
       } finally {
@@ -64,6 +82,21 @@ export const Settings = () => {
     setSystemSettings({ ...systemSettings, [e.target.name]: value });
   };
 
+  const savePreferences = async () => {
+    try {
+      await api.put('/users/profile/preferences', systemSettings);
+      if (systemSettings.darkMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
+      alert('Preferences saved successfully!');
+    } catch (error) {
+      console.error('Error saving preferences', error);
+      alert('Failed to save preferences.');
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
@@ -75,12 +108,58 @@ export const Settings = () => {
       };
       const res = await api.put('/users/profile', dataToSubmit);
       setProfile(res.data);
+      updateUser({ name: res.data.name, profilePicture: res.data.profilePicture });
       alert('Settings updated successfully!');
     } catch (error) {
       console.error('Error updating profile', error);
       alert('Failed to update settings.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError('');
+    setPasswordSuccess('');
+    
+    if (passwordData.newPassword !== passwordData.confirmPassword) {
+      setPasswordError('New passwords do not match');
+      return;
+    }
+    
+    setPasswordSaving(true);
+    try {
+      await api.put('/users/profile/password', {
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword
+      });
+      setPasswordSuccess('Password updated successfully');
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (error: any) {
+      setPasswordError(error.response?.data?.message || 'Failed to update password');
+    } finally {
+      setPasswordSaving(false);
+    }
+  };
+
+  const handleProfilePictureUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('picture', file);
+
+    try {
+      const res = await api.post('/users/profile/picture', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+      setProfile({ ...profile, profilePicture: res.data.profilePicture });
+      updateUser({ profilePicture: res.data.profilePicture });
+      alert('Profile picture updated successfully!');
+    } catch (error) {
+      console.error('Error uploading profile picture', error);
+      alert('Failed to upload profile picture.');
     }
   };
 
@@ -135,8 +214,27 @@ export const Settings = () => {
           {activeTab === 'profile' && (
             <div className="space-y-8">
               <div className="flex items-center gap-6 mb-8">
-                <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-4xl font-bold">
-                  {profile?.name?.charAt(0) || 'U'}
+                <div className="relative group">
+                  {profile?.profilePicture ? (
+                    <img src={profile.profilePicture} alt="Profile" className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md" />
+                  ) : (
+                    <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-4xl font-bold shadow-md">
+                      {profile?.name?.charAt(0) || 'U'}
+                    </div>
+                  )}
+                  <button 
+                    onClick={() => fileInputRef.current?.click()}
+                    className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                  >
+                    <span className="text-white text-xs font-medium">Change</span>
+                  </button>
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    onChange={handleProfilePictureUpload} 
+                    className="hidden" 
+                    accept="image/*"
+                  />
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold text-gray-900">{profile?.name}</h1>
@@ -233,6 +331,52 @@ export const Settings = () => {
                   </button>
                 </div>
               </form>
+
+              <div className="pt-8 border-t border-gray-100">
+                <h3 className="text-xl font-bold text-gray-900 mb-6">Change Password</h3>
+                <form onSubmit={handlePasswordChange} className="space-y-6 max-w-md">
+                  {passwordError && <div className="p-3 bg-red-50 text-red-600 rounded-xl text-sm">{passwordError}</div>}
+                  {passwordSuccess && <div className="p-3 bg-green-50 text-green-600 rounded-xl text-sm">{passwordSuccess}</div>}
+                  
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Current Password</label>
+                    <input 
+                      type="password" 
+                      value={passwordData.currentPassword}
+                      onChange={(e) => setPasswordData({...passwordData, currentPassword: e.target.value})}
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">New Password</label>
+                    <input 
+                      type="password" 
+                      value={passwordData.newPassword}
+                      onChange={(e) => setPasswordData({...passwordData, newPassword: e.target.value})}
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Confirm New Password</label>
+                    <input 
+                      type="password" 
+                      value={passwordData.confirmPassword}
+                      onChange={(e) => setPasswordData({...passwordData, confirmPassword: e.target.value})}
+                      className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      required
+                    />
+                  </div>
+                  <button 
+                    type="submit" 
+                    disabled={passwordSaving}
+                    className="bg-gray-900 hover:bg-black text-white px-6 py-3 rounded-xl font-medium transition-colors disabled:opacity-50"
+                  >
+                    {passwordSaving ? 'Updating...' : 'Update Password'}
+                  </button>
+                </form>
+              </div>
             </div>
           )}
 
@@ -278,7 +422,7 @@ export const Settings = () => {
               
               <div className="flex justify-end pt-4">
                 <button 
-                  onClick={() => alert('Preferences saved!')}
+                  onClick={savePreferences}
                   className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
                 >
                   <Save className="w-5 h-5" />
@@ -324,7 +468,7 @@ export const Settings = () => {
 
               <div className="flex justify-end pt-4">
                 <button 
-                  onClick={() => alert('Notification settings saved!')}
+                  onClick={savePreferences}
                   className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
                 >
                   <Save className="w-5 h-5" />
