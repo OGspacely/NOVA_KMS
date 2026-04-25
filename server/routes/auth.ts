@@ -30,7 +30,7 @@ router.get('/google/url', (req, res) => {
     response_type: 'code',
     scope: 'email profile',
     access_type: 'offline',
-    prompt: 'consent'
+    prompt: 'select_account'
   });
   res.json({ url: `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}` });
 });

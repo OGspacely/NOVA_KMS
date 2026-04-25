@@ -79,36 +79,55 @@ export const Login = () => {
 
   const handleSocialLogin = async (provider: string) => {
     try {
-      // MOCK SOCIAL LOGIN FOR DEMO PURPOSES
-      // Because the Firebase Project is locked to the original template author,
-      // true Google/Apple OAuth will fail with 'unauthorized-domain'.
-      // This simulated flow safely logs the user in using their requested ID.
-      const userEmail = window.prompt(`Simulated ${provider} Login. Enter your ${provider} email to continue:`, `${provider.toLowerCase()}.user@example.com`);
-      
-      if (!userEmail) {
-        setError('Sign-in was cancelled.');
+      const endpoint = provider.toLowerCase() === 'google' ? '/auth/google/url' : '/auth/apple/url';
+      const res = await api.get(endpoint);
+      const url = res.data.url;
+
+      // Calculate center position for the popup
+      const width = 500;
+      const height = 600;
+      const left = window.screen.width / 2 - width / 2;
+      const top = window.screen.height / 2 - height / 2;
+
+      const popup = window.open(
+        url,
+        `${provider} Login`,
+        `width=${width},height=${height},top=${top},left=${left}`
+      );
+
+      if (!popup) {
+        setError(`Please allow popups for this site to sign in with ${provider}.`);
         return;
       }
-      
-      const userName = window.prompt(`Enter your name:`, `${provider} User`) || `${provider} User`;
 
-      const mockUser = {
-        uid: `${provider.toLowerCase()}-mock-uid-` + Math.random().toString(36).substring(7),
-        email: userEmail,
-        displayName: userName,
+      // Listen for the success message from the popup
+      const messageListener = (event: MessageEvent) => {
+        // Ensure the message is from our own domain for security
+        if (event.origin !== window.location.origin && event.origin !== 'http://localhost:3000') return;
+
+        if (event.data?.type === 'OAUTH_AUTH_SUCCESS') {
+          // Clean up listener
+          window.removeEventListener('message', messageListener);
+          
+          const { token, user } = event.data;
+          login(user, token);
+          navigate('/');
+        }
       };
-      
-      const res = await api.post('/auth/firebase', {
-        uid: mockUser.uid,
-        email: mockUser.email,
-        name: mockUser.displayName,
-      });
-      
-      login(res.data, res.data.token);
-      navigate('/');
+
+      window.addEventListener('message', messageListener);
+
+      // Check if popup is closed manually
+      const checkPopup = setInterval(() => {
+        if (popup && popup.closed) {
+          clearInterval(checkPopup);
+          window.removeEventListener('message', messageListener);
+        }
+      }, 1000);
+
     } catch (err: any) {
       console.error(err);
-      setError(`Failed to process ${provider} login simulation.`);
+      setError(err.response?.data?.message || `Failed to initialize ${provider} login.`);
     }
   };
 
