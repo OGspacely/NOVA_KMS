@@ -164,39 +164,6 @@ router.post('/apple/callback', async (req, res) => {
   }
 });
 
-router.post('/firebase', async (req, res) => {
-  try {
-    const { email, name, uid } = req.body;
-    
-    if (!email || !uid) {
-      return res.status(400).json({ message: 'Email and UID are required' });
-    }
-
-    let user = await User.findOne({ email });
-    if (!user) {
-      user = await User.create({
-        name: name || 'Google User',
-        email,
-        password: await bcrypt.hash(uid, 10), // Use uid as a secure random password
-        role: email === 'eaasante333@gmail.com' ? 'Admin' : 'Student',
-      });
-    } else if (email === 'eaasante333@gmail.com' && user.role !== 'Admin') {
-      user.role = 'Admin';
-      await user.save();
-    }
-
-    res.json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      token: generateToken(user._id.toString()),
-    });
-  } catch (error) {
-    console.error('Firebase login error:', error);
-    res.status(500).json({ message: 'Server error during Firebase login', error });
-  }
-});
 
 router.post('/register', async (req, res) => {
   try {

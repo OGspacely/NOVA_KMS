@@ -1,28 +1,56 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
 import { User } from '../models/User.ts';
+import { createClient } from '@supabase/supabase-js';
 
 export interface AuthRequest extends Request {
   user?: any;
 }
 
-const JWT_SECRET = process.env.JWT_SECRET || 'fallback_secret_for_dev';
+let supabase: any = null;
 
 export const protect = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  if (!supabase) {
+    const supabaseUrl = process.env.VITE_SUPABASE_URL || '';
+    const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || '';
+    if (!supabaseUrl || !supabaseAnonKey) {
+      return res.status(500).json({ message: 'Supabase configuration is missing in the backend' });
+    }
+    supabase = createClient(supabaseUrl, supabaseAnonKey);
+  }
+
   let token;
 
   if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
     try {
       token = req.headers.authorization.split(' ')[1];
-      const decoded: any = jwt.verify(token, JWT_SECRET);
-      req.user = await User.findById(decoded.id).select('-password');
-      if (!req.user) {
-        res.status(401).json({ message: 'Not authorized, user not found' });
-        return;
+      
+      // Verify token with Supabase
+      const { data: { user: supabaseUser }, error } = await supabase.auth.getUser(token);
+      
+      if (error || !supabaseUser) {
+        throw new Error('Supabase verification failed');
       }
+
+      // Find or create local user to maintain database relations
+      let localUser = await User.findOne({ email: supabaseUser.email });
+      
+      if (!localUser) {
+        localUser = await User.create({
+          name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || 'User',
+          email: supabaseUser.email,
+          password: 'supabase_managed_' + Math.random().toString(36).substring(7),
+          role: supabaseUser.user_metadata?.role || (supabaseUser.email === 'eaasante333@gmail.com' ? 'Admin' : 'Student'),
+        });
+      } else if (supabaseUser.email === 'eaasante333@gmail.com' && localUser.role !== 'Admin') {
+        localUser.role = 'Admin';
+        await localUser.save();
+      }
+
+      req.user = localUser;
       next();
       return;
     } catch (error) {
+      console.error('Auth middleware error:', error);
       res.status(401).json({ message: 'Not authorized, token failed' });
       return;
     }

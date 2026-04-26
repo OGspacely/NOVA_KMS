@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '../supabase.ts';
 import { useAuth } from '../context/AuthContext.tsx';
 import api from '../api/axios.ts';
 import { Eye, EyeOff, Mail, Lock, User, Shield, ArrowRight, ArrowLeft } from 'lucide-react';
@@ -42,7 +43,6 @@ export const Login = () => {
   const [error, setError] = useState('');
   const [logoError, setLogoError] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { login } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -67,67 +67,44 @@ export const Login = () => {
     e.preventDefault();
     setError('');
     try {
-      const endpoint = isLogin ? '/auth/login' : '/auth/register';
-      const payload = isLogin ? { identifier: email, password } : { name, email, password, role };
-      const res = await api.post(endpoint, payload);
-      login(res.data, res.data.token);
+      if (isLogin) {
+        const { error } = await supabase.auth.signInWithPassword({
+          email,
+          password,
+        });
+        if (error) throw error;
+      } else {
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: {
+              name,
+              role,
+            }
+          }
+        });
+        if (error) throw error;
+        // Optionally inform the user to check their email for verification here
+      }
       navigate('/');
     } catch (err: any) {
-      setError(err.response?.data?.message || 'An error occurred');
+      setError(err.message || 'An error occurred');
     }
   };
 
   const handleSocialLogin = async (provider: string) => {
     try {
-      const endpoint = provider.toLowerCase() === 'google' ? '/auth/google/url' : '/auth/apple/url';
-      const res = await api.get(endpoint);
-      const url = res.data.url;
-
-      // Calculate center position for the popup
-      const width = 500;
-      const height = 600;
-      const left = window.screen.width / 2 - width / 2;
-      const top = window.screen.height / 2 - height / 2;
-
-      const popup = window.open(
-        url,
-        `${provider} Login`,
-        `width=${width},height=${height},top=${top},left=${left}`
-      );
-
-      if (!popup) {
-        setError(`Please allow popups for this site to sign in with ${provider}.`);
-        return;
-      }
-
-      // Listen for the success message from the popup
-      const messageListener = (event: MessageEvent) => {
-        // Ensure the message is from our own domain for security
-        if (event.origin !== window.location.origin && event.origin !== 'http://localhost:3000') return;
-
-        if (event.data?.type === 'OAUTH_AUTH_SUCCESS') {
-          // Clean up listener
-          window.removeEventListener('message', messageListener);
-          
-          const { token, user } = event.data;
-          login(user, token);
-          navigate('/');
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: provider.toLowerCase() as any,
+        options: {
+          redirectTo: window.location.origin
         }
-      };
-
-      window.addEventListener('message', messageListener);
-
-      // Check if popup is closed manually
-      const checkPopup = setInterval(() => {
-        if (popup && popup.closed) {
-          clearInterval(checkPopup);
-          window.removeEventListener('message', messageListener);
-        }
-      }, 1000);
-
+      });
+      if (error) throw error;
     } catch (err: any) {
       console.error(err);
-      setError(err.response?.data?.message || `Failed to initialize ${provider} login.`);
+      setError(err.message || `Failed to initialize ${provider} login.`);
     }
   };
 
