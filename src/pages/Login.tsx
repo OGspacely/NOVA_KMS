@@ -2,31 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../supabase.ts';
 import { useAuth } from '../context/AuthContext.tsx';
-import api from '../api/axios.ts';
-import { Eye, EyeOff, Mail, Lock, User, Shield, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, User, ArrowRight, ArrowLeft } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const slides = [
+// Premium scenes based on the specific "Harvard/Apple" brand visual requirements
+const premiumScenes = [
   {
-    image: "https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=2070&q=80",
-    badge: "Knowledge Management",
-    title: "One Platform to Streamline",
-    highlight: "All Academic Knowledge",
-    description: "Your students are set to learn 20% faster next month. Your institutional knowledge is preserved and easily accessible with our KMS tools."
+    image: "/login-scenes/classroom.png",
+    title: "Classroom Focus",
+    description: "Intellectually vibrant environments designed for focused, aspirational learning."
   },
   {
-    image: "https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=2070&q=80",
-    badge: "Collaborative Learning",
-    title: "Empower Your",
-    highlight: "Teaching Staff",
-    description: "Share resources, lesson plans, and best practices seamlessly across your entire institution to foster a culture of continuous improvement."
-  },
-  {
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=2070&q=80",
-    badge: "Data-Driven Insights",
-    title: "Track Academic",
-    highlight: "Progress & Success",
-    description: "Monitor student engagement and content effectiveness with powerful built-in analytics to ensure no one falls behind."
+    image: "/login-scenes/campus.png",
+    title: "Campus Life",
+    description: "Uplifting and community-driven campus experiences at the heart of excellence."
   }
 ];
 
@@ -44,24 +33,26 @@ export const Login = () => {
   const [logoError, setLogoError] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
+  const { user: authUser } = useAuth();
 
+  // Redirect if already logged in
+  useEffect(() => {
+    if (authUser) {
+      navigate('/');
+    }
+  }, [authUser, navigate]);
+
+  // Faster animation cycle (4 seconds instead of 6)
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 5000);
+      setCurrentSlide((prev) => (prev + 1) % premiumScenes.length);
+    }, 4500);
     return () => clearInterval(timer);
   }, []);
 
-  // HCI Best Practice: Clear errors when switching between login/register/forgot password views
   useEffect(() => {
     setError('');
   }, [isLogin, isForgotPassword]);
-
-  // HCI Best Practice: Clear errors when the user starts typing to correct their mistake
-  useEffect(() => {
-    if (error) setError('');
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [email, password, name, role]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,9 +76,13 @@ export const Login = () => {
           }
         });
         if (error) throw error;
-        // Optionally inform the user to check their email for verification here
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          navigate('/');
+        } else {
+          setError('Account created! Please check your email for verification.');
+        }
       }
-      navigate('/');
     } catch (err: any) {
       setError(err.message || 'An error occurred');
     }
@@ -95,10 +90,17 @@ export const Login = () => {
 
   const handleSocialLogin = async (provider: string) => {
     try {
+      setError('');
+      if (!isLogin && !role) {
+        setError('Please select a role before signing up.');
+        return;
+      }
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: provider.toLowerCase() as any,
         options: {
-          redirectTo: window.location.origin
+          redirectTo: window.location.origin,
+          data: !isLogin ? { role } : undefined
         }
       });
       if (error) throw error;
@@ -106,21 +108,6 @@ export const Login = () => {
       console.error(err);
       setError(err.message || `Failed to initialize ${provider} login.`);
     }
-  };
-
-
-
-  const handleForgotPassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    if (!email) {
-      setError('Please enter your email address');
-      return;
-    }
-    // Mock API call for password reset
-    setTimeout(() => {
-      setResetSent(true);
-    }, 1000);
   };
 
   const LogoFallback = () => (
@@ -137,31 +124,42 @@ export const Login = () => {
     <div className="min-h-screen bg-[#f3f4f6] p-4 md:p-8 flex items-center justify-center font-sans">
       <div className="w-full max-w-[1200px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,_0,_0,_0.05)] overflow-hidden flex min-h-[750px] border border-gray-100">
         
-        {/* Left Panel - Image Background */}
+        {/* Left Panel - Ken Burns Cinematic Animation */}
         <div className="hidden lg:flex flex-col justify-between w-[45%] bg-[#0a0a0a] text-white p-12 relative overflow-hidden">
-          {/* Background Images - Sliding from right to left only */}
-          <AnimatePresence initial={false}>
+          <AnimatePresence mode="popLayout">
             <motion.div 
               key={currentSlide}
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '-100%' }}
-              transition={{ duration: 1, ease: 'easeInOut' }}
+              initial={{ opacity: 0, scale: 1.1 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2, ease: 'easeInOut' }}
               className="absolute inset-0 w-full h-full"
             >
-              <img 
-                src={slides[currentSlide].image} 
-                alt={`Slide ${currentSlide + 1}`} 
-                className="w-full h-full object-cover opacity-50"
-                referrerPolicy="no-referrer"
+              {/* Ken Burns Effect (Slow Zoom/Pan) */}
+              <motion.img 
+                src={premiumScenes[currentSlide].image} 
+                alt={premiumScenes[currentSlide].title} 
+                className="w-full h-full object-cover opacity-70"
+                animate={{ 
+                  scale: [1, 1.05],
+                  x: [0, -10],
+                }}
+                transition={{ 
+                  duration: 6, 
+                  ease: "linear",
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
               />
             </motion.div>
           </AnimatePresence>
-          {/* Gradient Overlay for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/60 to-transparent"></div>
           
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent"></div>
+          
+          {/* Preload next image to prevent black space */}
+          <link rel="preload" as="image" href={premiumScenes[(currentSlide + 1) % premiumScenes.length].image} />
+
           <div className="relative z-10">
-            {/* Logo */}
             <div className="bg-white/95 backdrop-blur-sm inline-block px-5 py-3.5 rounded-2xl shadow-xl border border-white/20">
               {!logoError ? (
                 <img 
@@ -176,322 +174,157 @@ export const Login = () => {
             </div>
           </div>
 
-          <div className="relative z-10 flex-1 flex flex-col justify-end mt-12 w-full overflow-hidden">
-            <div className="relative h-[280px] w-full">
-              <AnimatePresence initial={false}>
-                <motion.div 
-                  key={currentSlide}
-                  initial={{ x: '100%' }}
-                  animate={{ x: 0 }}
-                  exit={{ x: '-100%' }}
-                  transition={{ duration: 1, ease: 'easeInOut' }}
-                  className="absolute inset-0 flex flex-col justify-end"
-                >
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-6 w-fit">
-                    <span className="w-2 h-2 rounded-full bg-[#E89B2D] animate-pulse"></span>
-                    <span className="text-xs font-medium tracking-wide text-white/90 uppercase">{slides[currentSlide].badge}</span>
-                  </div>
-                  <h2 className="text-4xl font-semibold mb-5 leading-[1.15] text-white tracking-tight">
-                    {slides[currentSlide].title}<br />
-                    <span className="text-white/60">{slides[currentSlide].highlight}</span>
-                  </h2>
-                  <p className="text-white/70 text-base max-w-md leading-relaxed font-light">
-                    {slides[currentSlide].description}
-                  </p>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+          <div className="relative z-10 flex-1 flex flex-col justify-end mt-12 w-full">
+            <AnimatePresence mode="wait">
+              <motion.div 
+                key={currentSlide}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.6 }}
+              >
+                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-6 w-fit">
+                  <span className="w-2 h-2 rounded-full bg-[#E89B2D] animate-pulse"></span>
+                  <span className="text-[10px] font-bold tracking-[0.2em] text-white/90 uppercase">Nova Experience</span>
+                </div>
+                <h2 className="text-4xl font-bold mb-4 leading-tight text-white tracking-tight">
+                  {premiumScenes[currentSlide].title}
+                </h2>
+                <p className="text-white/60 text-base max-w-sm leading-relaxed font-medium italic">
+                  "{premiumScenes[currentSlide].description}"
+                </p>
+              </motion.div>
+            </AnimatePresence>
             
-            {/* Pagination Dots */}
-            <div className="flex gap-2 mt-8">
-              {slides.map((_, index) => (
+            <div className="flex gap-2 mt-10">
+              {premiumScenes.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentSlide(index)}
-                  className={`h-1.5 rounded-full transition-all duration-500 outline-none focus:outline-none ${
-                    currentSlide === index ? 'w-8 bg-white' : 'w-2 bg-white/30 hover:bg-white/50'
+                  className={`h-1 rounded-full transition-all duration-700 ${
+                    currentSlide === index ? 'w-10 bg-white' : 'w-2 bg-white/20 hover:bg-white/40'
                   }`}
-                  aria-label={`Go to slide ${index + 1}`}
                 />
               ))}
             </div>
           </div>
 
-          <div className="relative z-10 text-xs text-white/40 flex justify-between w-full mt-12 font-medium tracking-wide">
+          <div className="relative z-10 text-[10px] text-white/40 flex justify-between w-full mt-12 font-bold tracking-[0.2em] uppercase">
             <span>© 2026 Nova KMS</span>
-            <span>Empowering Education</span>
+            <span>Est. 2024</span>
           </div>
         </div>
 
-        {/* Right Panel - Light */}
+        {/* Right Panel - Auth Form */}
         <div className="w-full lg:w-[55%] p-8 md:p-16 flex flex-col relative bg-white overflow-y-auto">
-          
-          {/* Top Bar */}
           <div className="flex justify-between items-center w-full mb-12">
             <div className="lg:hidden">
               {!logoError ? (
-                <img 
-                  src="/nova-logo.png" 
-                  alt="NOVA" 
-                  className="h-8 object-contain" 
-                  onError={() => setLogoError(true)} 
-                />
+                <img src="/nova-logo.png" alt="NOVA" className="h-8 object-contain" onError={() => setLogoError(true)} />
               ) : (
                 <LogoFallback />
               )}
             </div>
-            <div className="hidden lg:block"></div> {/* Spacer */}
+            <div className="hidden lg:block"></div>
             {!isForgotPassword && (
-              <div className="text-sm text-gray-500 font-medium">
-                {isLogin ? "Don't have an account? " : "Already have an account? "}
+              <div className="text-sm text-gray-400 font-bold uppercase tracking-wider">
+                {isLogin ? "New here? " : "Joined already? "}
                 <button 
                   onClick={() => setIsLogin(!isLogin)}
-                  className="text-[#0055A4] font-semibold hover:text-[#004080] transition-colors outline-none focus:outline-none"
+                  className="text-[#0055A4] hover:text-[#004080] transition-colors ml-1"
                 >
-                  {isLogin ? 'Sign Up' : 'Sign In'}
+                  {isLogin ? 'Create Account' : 'Sign In'}
                 </button>
               </div>
             )}
           </div>
 
-          {/* Form Container */}
           <div className="max-w-[420px] w-full mx-auto flex-1 flex flex-col justify-center">
-            
-            {isForgotPassword ? (
-              /* Forgot Password View */
-              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <button 
-                  onClick={() => {
-                    setIsForgotPassword(false);
-                    setResetSent(false);
-                    setError('');
-                  }}
-                  className="flex items-center gap-2 text-sm text-gray-500 hover:text-gray-900 mb-8 transition-colors outline-none focus:outline-none"
-                >
-                  <ArrowLeft className="w-4 h-4" />
-                  Back to login
-                </button>
-
-                <div className="mb-10">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-3 tracking-tight">
-                    Reset password
-                  </h2>
-                  <p className="text-gray-500 text-sm">
-                    Enter your email address and we'll send you a link to reset your password.
-                  </p>
-                </div>
-
-                {error && (
-                  <div role="alert" aria-live="assertive" className="bg-red-50 text-red-600 p-4 rounded-2xl mb-6 text-sm flex items-start gap-3 border border-red-100">
-                    <div className="mt-0.5">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"></path></svg>
-                    </div>
-                    <span>{error}</span>
-                  </div>
-                )}
-
-                {resetSent ? (
-                  <div className="bg-green-50 text-green-700 p-6 rounded-2xl border border-green-100 text-center">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Mail className="w-6 h-6 text-green-600" />
-                    </div>
-                    <h3 className="font-semibold text-lg mb-2">Check your email</h3>
-                    <p className="text-sm text-green-600/80">
-                      We've sent a password reset link to <span className="font-medium">{email}</span>.
-                    </p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleForgotPassword} className="space-y-5">
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Email</label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                          <Mail className="h-4 w-4 text-gray-400" />
-                        </div>
-                        <input
-                          type="email"
-                          required
-                          placeholder="johndoe@mail.com"
-                          className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#0055A4]/10 focus:border-[#0055A4] outline-none transition-all text-sm bg-gray-50/50 focus:bg-white"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                        />
-                      </div>
-                    </div>
-
+            {!isLogin && (
+              <div className="mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
+                <label className="block text-[10px] font-bold text-gray-400 mb-4 uppercase tracking-[0.2em]">Select Your Platform Role</label>
+                <div className="grid grid-cols-3 gap-3">
+                  {['Student', 'Teacher', 'Admin'].map((r) => (
                     <button
-                      type="submit"
-                      className="w-full bg-[#0055A4] hover:bg-[#004080] text-white font-semibold py-3.5 rounded-xl transition-all mt-4 text-sm shadow-[0_4px_14px_0_rgba(0,85,164,0.25)] hover:shadow-[0_6px_20px_rgba(0,85,164,0.23)] hover:-translate-y-0.5 flex items-center justify-center gap-2 outline-none focus:outline-none"
+                      key={r}
+                      type="button"
+                      onClick={() => setRole(r)}
+                      className={`py-3 px-2 rounded-xl text-[11px] font-bold transition-all border uppercase tracking-widest ${
+                        role === r 
+                          ? 'bg-[#0055A4] text-white border-[#0055A4] shadow-lg scale-105' 
+                          : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'
+                      }`}
                     >
-                      Send Reset Link
-                      <ArrowRight className="w-4 h-4" />
+                      {r}
                     </button>
-                  </form>
-                )}
-              </div>
-            ) : (
-              /* Login / Register View */
-              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="mb-10">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-3 tracking-tight">
-                    {isLogin ? 'Welcome back' : 'Create an account'}
-                  </h2>
-                  <p className="text-gray-500 text-sm">
-                    {isLogin ? 'Please enter your details to sign in to your account.' : 'Enter your details below to create your Nova account.'}
-                  </p>
+                  ))}
                 </div>
-
-                {error && (
-                  <div role="alert" aria-live="assertive" className="bg-red-50 text-red-600 p-4 rounded-2xl mb-6 text-sm flex items-start gap-3 border border-red-100">
-                    <div className="mt-0.5">
-                      <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd"></path></svg>
-                    </div>
-                    <span>{error}</span>
-                  </div>
-                )}
-
-                {/* Social Logins */}
-                <div className="grid grid-cols-2 gap-4 mb-8">
-                  <button 
-                    type="button" 
-                    onClick={() => handleSocialLogin('Google')}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all text-sm font-medium text-gray-700 shadow-sm outline-none focus:outline-none"
-                  >
-                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-4 h-4" />
-                    Google
-                  </button>
-                  <button 
-                    type="button" 
-                    onClick={() => handleSocialLogin('Apple')}
-                    className="flex items-center justify-center gap-2 px-4 py-2.5 border border-gray-200 rounded-xl hover:bg-gray-50 hover:border-gray-300 transition-all text-sm font-medium text-gray-700 shadow-sm outline-none focus:outline-none"
-                  >
-                    <img src="https://www.svgrepo.com/show/511330/apple-173.svg" alt="Apple" className="w-4 h-4" />
-                    Apple
-                  </button>
-                </div>
-
-                <div className="flex items-center gap-4 mb-8">
-                  <div className="flex-1 h-px bg-gray-100"></div>
-                  <span className="text-[11px] text-gray-400 uppercase tracking-widest font-medium">Or continue with email</span>
-                  <div className="flex-1 h-px bg-gray-100"></div>
-                </div>
-
-                <form onSubmit={handleSubmit} className="space-y-5">
-                  {!isLogin && (
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Full Name</label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                          <User className="h-4 w-4 text-gray-400" />
-                        </div>
-                        <input
-                          type="text"
-                          required
-                          placeholder="John Doe"
-                          className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#0055A4]/10 focus:border-[#0055A4] outline-none transition-all text-sm bg-gray-50/50 focus:bg-white"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">
-                      {isLogin ? 'Email or Username' : 'Email'}
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        {isLogin ? <User className="h-4 w-4 text-gray-400" /> : <Mail className="h-4 w-4 text-gray-400" />}
-                      </div>
-                      <input
-                        type={isLogin ? "text" : "email"}
-                        required
-                        placeholder={isLogin ? "johndoe@mail.com or John Doe" : "johndoe@mail.com"}
-                        className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#0055A4]/10 focus:border-[#0055A4] outline-none transition-all text-sm bg-gray-50/50 focus:bg-white"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                      />
-                    </div>
-                  </div>
-
-                  <div>
-                    <div className="flex justify-between items-center mb-2">
-                      <label className="block text-xs font-semibold text-gray-700 uppercase tracking-wide">Password</label>
-                      {isLogin && (
-                        <button 
-                          type="button"
-                          onClick={() => setIsForgotPassword(true)}
-                          className="text-xs font-medium text-[#0055A4] hover:text-[#004080] transition-colors outline-none focus:outline-none"
-                        >
-                          Forgot password?
-                        </button>
-                      )}
-                    </div>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                        <Lock className="h-4 w-4 text-gray-400" />
-                      </div>
-                      <input
-                        type={showPassword ? "text" : "password"}
-                        required
-                        placeholder="••••••••"
-                        className="w-full pl-11 pr-12 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#0055A4]/10 focus:border-[#0055A4] outline-none transition-all text-sm bg-gray-50/50 focus:bg-white"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                      />
-                      <button 
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors p-1 outline-none focus:outline-none"
-                      >
-                        {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  {!isLogin && (
-                    <div>
-                      <label className="block text-xs font-semibold text-gray-700 mb-2 uppercase tracking-wide">Role</label>
-                      <div className="relative">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                          <Shield className="h-4 w-4 text-gray-400" />
-                        </div>
-                        <select
-                          className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-4 focus:ring-[#0055A4]/10 focus:border-[#0055A4] outline-none transition-all text-sm bg-gray-50/50 focus:bg-white appearance-none"
-                          value={role}
-                          onChange={(e) => setRole(e.target.value)}
-                        >
-                          <option value="Student">Student</option>
-                          <option value="Teacher">Teacher</option>
-                          <option value="Admin">Admin</option>
-                        </select>
-                        <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
-                          <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-
-                  <button
-                    type="submit"
-                    className="w-full bg-[#0055A4] hover:bg-[#004080] text-white font-semibold py-3.5 rounded-xl transition-all mt-4 text-sm shadow-[0_4px_14px_0_rgba(0,85,164,0.25)] hover:shadow-[0_6px_20px_rgba(0,85,164,0.23)] hover:-translate-y-0.5 flex items-center justify-center gap-2 outline-none focus:outline-none"
-                  >
-                    {isLogin ? 'Sign In' : 'Create Account'}
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
-                </form>
               </div>
             )}
+
+            <div className="mb-10">
+              <h2 className="text-4xl font-black text-gray-900 mb-3 tracking-tighter">
+                {isLogin ? 'Access Nova' : 'Join Nova'}
+              </h2>
+              <p className="text-gray-400 text-sm font-medium">
+                {isLogin ? 'Enter your credentials to continue your journey.' : 'Unlock your academic potential today.'}
+              </p>
+            </div>
+
+            {error && (
+              <div className="bg-red-50 text-red-500 p-4 rounded-2xl mb-8 text-xs font-bold border border-red-100 flex items-center gap-3">
+                <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse"></div>
+                <span>{error}</span>
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-4 mb-10">
+              <button onClick={() => handleSocialLogin('Google')} className="flex items-center justify-center gap-3 px-4 py-3 border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all text-xs font-bold text-gray-600 shadow-sm">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="G" className="w-4 h-4" />
+                Google
+              </button>
+              <button onClick={() => handleSocialLogin('Apple')} className="flex items-center justify-center gap-3 px-4 py-3 border border-gray-100 rounded-2xl hover:bg-gray-50 transition-all text-xs font-bold text-gray-600 shadow-sm">
+                <img src="https://www.svgrepo.com/show/511330/apple-173.svg" alt="A" className="w-4 h-4" />
+                Apple
+              </button>
+            </div>
+
+            <div className="relative mb-10">
+              <div className="absolute inset-0 flex items-center"><div className="w-full border-t border-gray-50"></div></div>
+              <div className="relative flex justify-center text-[10px] uppercase tracking-[0.3em] font-black text-gray-300"><span className="bg-white px-4">Or</span></div>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-5">
+              {!isLogin && (
+                <div className="relative group">
+                  <User className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-300 group-focus-within:text-[#0055A4] transition-colors" />
+                  <input type="text" required placeholder="Full Name" className="w-full pl-12 pr-4 py-3.5 bg-gray-50/50 border border-transparent focus:border-[#0055A4]/20 focus:bg-white rounded-2xl outline-none text-sm transition-all font-medium" value={name} onChange={(e) => setName(e.target.value)} />
+                </div>
+              )}
+              <div className="relative group">
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-300 group-focus-within:text-[#0055A4] transition-colors" />
+                <input type="email" required placeholder="Email Address" className="w-full pl-12 pr-4 py-3.5 bg-gray-50/50 border border-transparent focus:border-[#0055A4]/20 focus:bg-white rounded-2xl outline-none text-sm transition-all font-medium" value={email} onChange={(e) => setEmail(e.target.value)} />
+              </div>
+              <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-300 group-focus-within:text-[#0055A4] transition-colors" />
+                <input type={showPassword ? "text" : "password"} required placeholder="Password" className="w-full pl-12 pr-12 py-3.5 bg-gray-50/50 border border-transparent focus:border-[#0055A4]/20 focus:bg-white rounded-2xl outline-none text-sm transition-all font-medium" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-600 transition-colors">
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+
+              <button type="submit" className="w-full bg-[#0055A4] hover:bg-[#004080] text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-blue-900/10 flex items-center justify-center gap-3 text-sm tracking-widest uppercase">
+                {isLogin ? 'Sign In' : 'Create Account'}
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </form>
           </div>
 
-          {/* Bottom Links */}
-          <div className="mt-auto pt-8 flex justify-center gap-8 text-xs text-gray-400 font-medium">
-            <Link to="/privacy" className="hover:text-gray-900 transition-colors">Privacy Policy</Link>
-            <Link to="/terms" className="hover:text-gray-900 transition-colors">Terms of Service</Link>
+          <div className="mt-auto pt-12 flex justify-center gap-10 text-[10px] font-black text-gray-300 uppercase tracking-widest">
+            <Link to="/privacy" className="hover:text-gray-900 transition-colors">Privacy</Link>
+            <Link to="/terms" className="hover:text-gray-900 transition-colors">Terms</Link>
             <Link to="/support" className="hover:text-gray-900 transition-colors">Support</Link>
           </div>
-
         </div>
       </div>
     </div>

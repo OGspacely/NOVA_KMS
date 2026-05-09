@@ -1,7 +1,22 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.tsx';
-import { Home, FileText, CheckSquare, Settings, LogOut, BarChart, BookOpen, User, MessageCircle, BrainCircuit } from 'lucide-react';
+import { 
+  Home, 
+  FileText, 
+  CheckSquare, 
+  Settings, 
+  LogOut, 
+  BarChart, 
+  BookOpen, 
+  User, 
+  MessageCircle, 
+  BrainCircuit,
+  ShieldCheck,
+  LayoutDashboard,
+  Users,
+  GraduationCap
+} from 'lucide-react';
 
 export const Sidebar = () => {
   const { user, logout } = useAuth();
@@ -18,8 +33,8 @@ export const Sidebar = () => {
   );
 
   return (
-    <div className="w-64 bg-[#0A192F] text-white flex flex-col h-screen fixed left-0 top-0">
-      <div className="p-4 flex items-center justify-center bg-white m-4 rounded-xl shadow-sm">
+    <div className="w-64 bg-[#0A192F] text-white flex flex-col h-screen fixed left-0 top-0 shadow-2xl z-30">
+      <div className="p-4 flex items-center justify-center bg-white m-4 rounded-2xl shadow-lg">
         {!logoError ? (
           <img 
             src="/nova-logo.png" 
@@ -32,90 +47,103 @@ export const Sidebar = () => {
         )}
       </div>
       
-      <nav className="flex-1 px-4 space-y-2 mt-2 pb-6">
-        <NavLink to="/" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
-          <Home className="w-5 h-5" />
-          <span>Dashboard</span>
+      <div className="px-6 mb-6">
+        <div className="bg-white/5 rounded-xl p-3 flex items-center gap-3 border border-white/10">
+          <div className="w-8 h-8 rounded-lg bg-[#0055A4] flex items-center justify-center text-xs font-bold shadow-inner">
+            {user?.role?.charAt(0) || 'U'}
+          </div>
+          <div className="overflow-hidden">
+            <p className="text-xs font-semibold text-white truncate">{user?.name || 'User'}</p>
+            <p className="text-[10px] text-[#8892B0] uppercase tracking-wider font-bold">{user?.role || 'Guest'}</p>
+          </div>
+        </div>
+      </div>
+
+      <nav className="flex-1 px-4 space-y-1.5 overflow-y-auto pb-6 scrollbar-hide">
+        <p className="px-4 text-[10px] font-bold text-[#8892B0] uppercase tracking-[0.2em] mb-3 mt-2 opacity-50">Menu</p>
+        
+        <NavLink to="/" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? 'bg-[#233554] text-white shadow-md' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+          <LayoutDashboard className="w-5 h-5" />
+          <span className="text-sm font-medium">Dashboard</span>
         </NavLink>
         
-        <NavLink to="/articles" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+        <NavLink to="/articles" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? 'bg-[#233554] text-white shadow-md' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
           <FileText className="w-5 h-5" />
-          <span>Browse</span>
+          <span className="text-sm font-medium">Browse Hub</span>
         </NavLink>
 
-        <NavLink to="/resources" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+        <NavLink to="/resources" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? 'bg-[#233554] text-white shadow-md' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
           <BookOpen className="w-5 h-5" />
-          <span>Resources</span>
+          <span className="text-sm font-medium">Resources</span>
         </NavLink>
 
-        {/* Student Only Links */}
+        {/* --- ROLE SPECIFIC FEATURES --- */}
+
         {user?.role === 'Student' && (
           <>
-            <NavLink to="/chatbot" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+            <p className="px-4 text-[10px] font-bold text-[#8892B0] uppercase tracking-[0.2em] mb-3 mt-6 opacity-50">Learning</p>
+            <NavLink to="/chatbot" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
               <MessageCircle className="w-5 h-5" />
-              <span>AI Assistant</span>
+              <span className="text-sm font-medium">Nova AI Assistant</span>
             </NavLink>
 
-            <NavLink to="/quizzes" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+            <NavLink to="/quizzes" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
               <BrainCircuit className="w-5 h-5" />
-              <span>Take Quizzes</span>
+              <span className="text-sm font-medium">Active Recall</span>
             </NavLink>
 
-            <NavLink to="/assignments" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
-              <FileText className="w-5 h-5" />
-              <span>My Assignments</span>
+            <NavLink to="/assignments" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+              <GraduationCap className="w-5 h-5" />
+              <span className="text-sm font-medium">Coursework</span>
             </NavLink>
           </>
         )}
 
-        {/* Teacher / Admin Only Links */}
         {(user?.role === 'Teacher' || user?.role === 'Admin') && (
           <>
-            <NavLink to="/quizzes" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+            <p className="px-4 text-[10px] font-bold text-[#8892B0] uppercase tracking-[0.2em] mb-3 mt-6 opacity-50">Management</p>
+            <NavLink to="/quizzes" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
               <BrainCircuit className="w-5 h-5" />
-              <span>Manage Quizzes</span>
+              <span className="text-sm font-medium">Quiz Builder</span>
             </NavLink>
 
-            <NavLink to="/assignments" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+            <NavLink to="/assignments" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
               <FileText className="w-5 h-5" />
-              <span>Manage Assignments</span>
+              <span className="text-sm font-medium">Assign Work</span>
+            </NavLink>
+            
+            <NavLink to="/editor" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+              <ShieldCheck className="w-5 h-5" />
+              <span className="text-sm font-medium">Create Content</span>
             </NavLink>
           </>
         )}
 
-        <NavLink to="/analytics" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+        {user?.role === 'Admin' && (
+          <>
+            <p className="px-4 text-[10px] font-bold text-[#8892B0] uppercase tracking-[0.2em] mb-3 mt-6 opacity-50">Administration</p>
+            <NavLink to="/review" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+              <CheckSquare className="w-5 h-5" />
+              <span className="text-sm font-medium">Review Queue</span>
+            </NavLink>
+
+            <NavLink to="/admin" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+              <Users className="w-5 h-5" />
+              <span className="text-sm font-medium">User Control</span>
+            </NavLink>
+          </>
+        )}
+
+        <p className="px-4 text-[10px] font-bold text-[#8892B0] uppercase tracking-[0.2em] mb-3 mt-6 opacity-50">Insights</p>
+        <NavLink to="/analytics" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
           <BarChart className="w-5 h-5" />
-          <span>Analytics</span>
+          <span className="text-sm font-medium">Platform Data</span>
         </NavLink>
 
-        <NavLink to="/editor" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
-          <FileText className="w-5 h-5" />
-          <span>{user?.role === 'Student' ? 'Contribute' : 'Create Article'}</span>
-        </NavLink>
-
-        <NavLink to="/feedback" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
-          <MessageCircle className="w-5 h-5" />
-          <span>Feedback</span>
-        </NavLink>
-
-        <NavLink to="/submissions" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
+        <NavLink to="/submissions" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
           <CheckSquare className="w-5 h-5" />
-          <span>My Submissions</span>
+          <span className="text-sm font-medium">My History</span>
         </NavLink>
-
-        {user?.role === 'Admin' && (
-          <NavLink to="/review" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
-            <CheckSquare className="w-5 h-5" />
-            <span>Review Queue</span>
-          </NavLink>
-        )}
-
-        {user?.role === 'Admin' && (
-          <NavLink to="/admin" className={({ isActive }) => `flex items-center gap-3 px-4 py-3 rounded-xl transition-colors ${isActive ? 'bg-[#233554] text-white' : 'text-[#8892B0] hover:bg-white/5 hover:text-white'}`}>
-            <Settings className="w-5 h-5" />
-            <span>Admin</span>
-          </NavLink>
-        )}
       </nav>
     </div>
   );
