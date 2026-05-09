@@ -51,21 +51,57 @@ export const Layout = () => {
     }
   };
 
+  const [showTroubleshoot, setShowTroubleshoot] = useState(false);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (loading || (isOAuthRedirect && !user)) {
+      timer = setTimeout(() => setShowTroubleshoot(true), 6000);
+    }
+    return () => clearTimeout(timer);
+  }, [loading, isOAuthRedirect, user]);
+
   // If loading or if we see OAuth tokens in the URL, show loading state
   if (loading || (isOAuthRedirect && !user)) {
+    const hasUrl = !!import.meta.env.VITE_SUPABASE_URL;
+    const hasKey = !!import.meta.env.VITE_SUPABASE_ANON_KEY;
+
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#0A192F] text-white p-6 text-center">
         <div className="relative w-24 h-24 mb-8">
           <div className="absolute inset-0 rounded-full border-4 border-blue-500/20 border-t-blue-500 animate-spin"></div>
           <div className="absolute inset-4 rounded-full border-4 border-white/10 border-b-white/40 animate-spin-slow"></div>
         </div>
-        <h2 className="text-2xl font-bold mb-2">Syncing your session...</h2>
-        <p className="text-gray-400 max-w-md">We're verifying your credentials and preparing your workspace. This usually takes a few seconds.</p>
+        <h2 className="text-2xl font-bold mb-2 tracking-tight">Syncing your session...</h2>
+        <p className="text-gray-400 max-w-sm mb-12">We're verifying your credentials with security providers. This usually takes a moment.</p>
         
-        <div className="mt-12 p-4 bg-white/5 rounded-2xl border border-white/10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-          <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-2 font-bold">Security Check</p>
-          <p className="text-xs text-blue-400">Verifying tokens with security providers...</p>
-        </div>
+        {!showTroubleshoot ? (
+          <div className="animate-pulse flex items-center gap-2 text-blue-400/80 text-sm font-medium">
+            <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+            Security Handshake in progress...
+          </div>
+        ) : (
+          <div className="p-6 bg-white/5 rounded-3xl border border-white/10 max-w-md animate-in fade-in zoom-in duration-500 backdrop-blur-xl">
+            <h3 className="text-sm font-bold uppercase tracking-widest text-blue-400 mb-4">Troubleshooting</h3>
+            <div className="space-y-3 mb-6">
+              <div className="flex items-center justify-between text-xs px-3 py-2 bg-black/20 rounded-lg">
+                <span className="text-gray-400">Connection URL</span>
+                <span className={hasUrl ? "text-green-400" : "text-red-400"}>{hasUrl ? "✓ Detected" : "✗ Missing"}</span>
+              </div>
+              <div className="flex items-center justify-between text-xs px-3 py-2 bg-black/20 rounded-lg">
+                <span className="text-gray-400">Security Key</span>
+                <span className={hasKey ? "text-green-400" : "text-red-400"}>{hasKey ? "✓ Detected" : "✗ Missing"}</span>
+              </div>
+            </div>
+            <p className="text-[11px] text-gray-500 mb-6 italic">If you are using Brave or a private browser, try disabling "Shields" or privacy blocks for this site.</p>
+            <button 
+              onClick={() => navigate('/login')}
+              className="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition-all border border-white/10"
+            >
+              Back to Login
+            </button>
+          </div>
+        )}
       </div>
     );
   }

@@ -85,18 +85,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const fetchUserProfile = async (supabaseUser: SupabaseUser) => {
+    console.log('Fetching user profile for:', supabaseUser.id);
     try {
       // In a full implementation, you would fetch additional profile data from a 'users' table
       // For now, we'll map the metadata directly
       const userData: User = {
         ...supabaseUser,
-        name: supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || 'User',
+        name: supabaseUser.user_metadata?.full_name || supabaseUser.user_metadata?.name || supabaseUser.email?.split('@')[0] || 'User',
         role: supabaseUser.user_metadata?.role || 'Student',
       };
+      console.log('User profile mapped:', userData.name, userData.role);
       setUser(userData);
     } catch (error) {
-      console.error('Error fetching user profile:', error);
-      setUser(supabaseUser as User);
+      console.error('Error in fetchUserProfile:', error);
+      throw error;
     }
   };
 
