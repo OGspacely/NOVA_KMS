@@ -51,37 +51,27 @@ export const Layout = () => {
     }
   };
 
-  const [syncTimeout, setSyncTimeout] = useState(false);
-
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (loading || (isOAuthRedirect && !user)) {
-      timer = setTimeout(() => {
-        setSyncTimeout(true);
-      }, 8000); // 8 second timeout
-    }
-    return () => clearTimeout(timer);
-  }, [loading, isOAuthRedirect, user]);
-
   // If loading or if we see OAuth tokens in the URL, show loading state
-  // But if we timeout or loading finishes and still no user, we should stop showing this
-  if ((loading || (isOAuthRedirect && !user)) && !syncTimeout) {
+  if (loading || (isOAuthRedirect && !user)) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-[#0A192F] text-white">
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#0A192F] text-white p-6 text-center">
         <div className="relative w-24 h-24 mb-8">
           <div className="absolute inset-0 rounded-full border-4 border-blue-500/20 border-t-blue-500 animate-spin"></div>
           <div className="absolute inset-4 rounded-full border-4 border-white/10 border-b-white/40 animate-spin-slow"></div>
         </div>
-        <p className="text-lg font-medium animate-pulse tracking-wide">Syncing your session...</p>
-        <p className="text-xs text-gray-500 mt-4 italic">Verifying credentials with security providers</p>
+        <h2 className="text-2xl font-bold mb-2">Syncing your session...</h2>
+        <p className="text-gray-400 max-w-md">We're verifying your credentials and preparing your workspace. This usually takes a few seconds.</p>
+        
+        <div className="mt-12 p-4 bg-white/5 rounded-2xl border border-white/10 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+          <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-2 font-bold">Security Check</p>
+          <p className="text-xs text-blue-400">Verifying tokens with security providers...</p>
+        </div>
       </div>
     );
   }
 
   if (!user) {
-    // If we reach here and it's an OAuth redirect that failed (or timed out), 
-    // we should redirect back to login and maybe show an error.
-    return <Navigate to="/login" state={{ error: "Authentication failed or timed out. Please try again." }} replace />;
+    return <Navigate to="/login" state={{ error: "Authentication session expired or failed. Please sign in again." }} replace />;
   }
 
   const unreadCount = notifications.filter(n => n.unread).length;

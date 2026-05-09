@@ -23,17 +23,29 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const isOAuth = window.location.hash.includes('access_token=') || 
+                   window.location.search.includes('code=');
+
     // Get initial session
     const initializeAuth = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
+        // If we detect an OAuth redirect, ensure we stay in loading state
+        if (isOAuth) setLoading(true);
+
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+
         if (session?.user) {
           await fetchUserProfile(session.user);
         }
       } catch (error) {
         console.error('Error fetching auth session:', error);
       } finally {
-        setLoading(false);
+        // Only stop loading here if it's NOT an OAuth redirect.
+        // For OAuth, we wait for onAuthStateChange to fire.
+        if (!isOAuth) {
+          setLoading(false);
+        }
       }
     };
 
@@ -42,18 +54,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for auth state changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        setLoading(true);
+        console.log('Auth state change:', event);
+        
         if (session?.user) {
+          setLoading(true);
           await fetchUserProfile(session.user);
+          setLoading(false);
         } else {
-          setUser(null);
+          // Only clear user and stop loading if we aren't in the middle of a sign-in event
+          if (event === 'SIGNED_OUT' || event === 'INITIAL_SESSION') {
+            setUser(null);
+            setLoading(false);
+          }
         }
-        setLoading(false);
       }
     );
 
+    // Fallback timeout for OAuth: if we're still loading after 15s, give up
+    let timeout: NodeJS.Timeout;
+    if (isOAuth) {
+      timeout = setTimeout(() => {
+        setLoading(false);
+      }, 15000);
+    }
+
     return () => {
       subscription.unsubscribe();
+      if (timeout) clearTimeout(timeout);
     };
   }, []);
 
