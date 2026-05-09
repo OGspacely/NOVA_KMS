@@ -6,7 +6,7 @@ import { Search, Bell, ChevronDown, User, Settings, LogOut } from 'lucide-react'
 import api from '../api/axios.ts';
 
 export const Layout = () => {
-  const { user, loading, logout } = useAuth();
+  const { user, loading, lastEvent, logout } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
@@ -92,13 +92,23 @@ export const Layout = () => {
                 <span className="text-gray-400">Security Key</span>
                 <span className={hasKey ? "text-green-400" : "text-red-400"}>{hasKey ? "✓ Detected" : "✗ Missing"}</span>
               </div>
+              <div className="flex items-center justify-between text-xs px-3 py-2 bg-black/20 rounded-lg">
+                <span className="text-gray-400">Auth Status</span>
+                <span className="text-blue-400 font-mono uppercase tracking-tighter">{lastEvent}</span>
+              </div>
             </div>
-            <p className="text-[11px] text-gray-500 mb-6 italic">If you are using Brave or a private browser, try disabling "Shields" or privacy blocks for this site.</p>
+            <p className="text-[11px] text-gray-500 mb-6 italic">If you are using Brave, try disabling "Shields" for this site. This allows the login token to be saved.</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="w-full py-3 bg-blue-600 hover:bg-blue-500 rounded-xl text-sm font-bold transition-all mb-3 shadow-lg shadow-blue-900/20"
+            >
+              Force Refresh Platform
+            </button>
             <button 
               onClick={() => navigate('/login')}
-              className="w-full py-3 bg-white/10 hover:bg-white/20 rounded-xl text-sm font-bold transition-all border border-white/10"
+              className="w-full py-3 bg-white/5 hover:bg-white/10 rounded-xl text-sm font-bold transition-all border border-white/10 text-gray-400"
             >
-              Back to Login
+              Cancel & Back to Login
             </button>
           </div>
         )}

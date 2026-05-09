@@ -12,6 +12,7 @@ export interface User extends SupabaseUser {
 interface AuthContextType {
   user: User | null;
   loading: boolean;
+  lastEvent: string;
   logout: () => Promise<void>;
   updateUser: (userData: Partial<User>) => void;
 }
@@ -21,6 +22,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [lastEvent, setLastEvent] = useState<string>('STARTING');
 
   useEffect(() => {
     const isOAuth = window.location.hash.includes('access_token=') || 
@@ -29,20 +31,33 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Get initial session
     const initializeAuth = async () => {
       try {
-        // If we detect an OAuth redirect, ensure we stay in loading state
+        console.log('Initializing Auth... OAuth detected:', isOAuth);
         if (isOAuth) setLoading(true);
 
+        // Force a small delay to allow Supabase to handle the URL hash
+        if (isOAuth) await new Promise(resolve => setTimeout(resolve, 1000));
+
         const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) throw error;
+        
+        if (error) {
+          console.error('Session fetch error:', error);
+          throw error;
+        }
 
         if (session?.user) {
+          console.log('Session found in initializeAuth');
           await fetchUserProfile(session.user);
+        } else if (isOAuth) {
+          console.log('No session found yet, but OAuth is in URL. Retrying once...');
+          // One-time manual retry for sticky tokens
+          const { data: { session: retrySession } } = await supabase.auth.getSession();
+          if (retrySession?.user) {
+            await fetchUserProfile(retrySession.user);
+          }
         }
       } catch (error) {
         console.error('Error fetching auth session:', error);
       } finally {
-        // Only stop loading here if it's NOT an OAuth redirect.
-        // For OAuth, we wait for onAuthStateChange to fire.
         if (!isOAuth) {
           setLoading(false);
         }
@@ -55,6 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
         console.log('Auth state change:', event);
+        setLastEvent(event);
         
         if (session?.user) {
           setLoading(true);
@@ -111,7 +127,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, loading, lastEvent, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );
