@@ -51,8 +51,21 @@ export const Layout = () => {
     }
   };
 
-  // If loading or if we see OAuth tokens in the URL, show loading state instead of redirecting
-  if (loading || (isOAuthRedirect && !user)) {
+  const [syncTimeout, setSyncTimeout] = useState(false);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (loading || (isOAuthRedirect && !user)) {
+      timer = setTimeout(() => {
+        setSyncTimeout(true);
+      }, 8000); // 8 second timeout
+    }
+    return () => clearTimeout(timer);
+  }, [loading, isOAuthRedirect, user]);
+
+  // If loading or if we see OAuth tokens in the URL, show loading state
+  // But if we timeout or loading finishes and still no user, we should stop showing this
+  if ((loading || (isOAuthRedirect && !user)) && !syncTimeout) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#0A192F] text-white">
         <div className="relative w-24 h-24 mb-8">
@@ -60,12 +73,15 @@ export const Layout = () => {
           <div className="absolute inset-4 rounded-full border-4 border-white/10 border-b-white/40 animate-spin-slow"></div>
         </div>
         <p className="text-lg font-medium animate-pulse tracking-wide">Syncing your session...</p>
+        <p className="text-xs text-gray-500 mt-4 italic">Verifying credentials with security providers</p>
       </div>
     );
   }
 
   if (!user) {
-    return <Navigate to="/login" replace />;
+    // If we reach here and it's an OAuth redirect that failed (or timed out), 
+    // we should redirect back to login and maybe show an error.
+    return <Navigate to="/login" state={{ error: "Authentication failed or timed out. Please try again." }} replace />;
   }
 
   const unreadCount = notifications.filter(n => n.unread).length;

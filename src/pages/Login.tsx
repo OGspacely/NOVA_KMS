@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../supabase.ts';
 import { useAuth } from '../context/AuthContext.tsx';
 import { Eye, EyeOff, Mail, Lock, User, ArrowRight, ArrowLeft } from 'lucide-react';
@@ -33,7 +33,17 @@ export const Login = () => {
   const [logoError, setLogoError] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const navigate = useNavigate();
+  const location = useLocation();
   const { user: authUser } = useAuth();
+
+  // Check for error in location state (e.g. from Layout timeout)
+  useEffect(() => {
+    if (location.state?.error) {
+      setError(location.state.error);
+      // Clear the state so the error doesn't persist on refresh
+      window.history.replaceState({}, document.title);
+    }
+  }, [location]);
 
   // Redirect if already logged in
   useEffect(() => {
