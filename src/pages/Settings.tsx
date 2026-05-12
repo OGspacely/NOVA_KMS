@@ -171,33 +171,34 @@ export const Settings = () => {
   if (loading) return <div className="p-8 text-center text-gray-500">Loading settings...</div>;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      <div className="flex flex-col md:flex-row gap-8">
+    <div className="max-w-5xl mx-auto space-y-4 sm:space-y-8">
+      <div className="flex flex-col md:flex-row gap-4 sm:gap-8">
         
-        {/* Settings Sidebar */}
-        <div className="w-full md:w-64 shrink-0 space-y-2">
+        {/* Settings Sidebar - horizontal scrollable on mobile */}
+        <div className="w-full md:w-64 shrink-0">
+          <div className="flex md:flex-col gap-1 sm:gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-hide">
           <button 
             onClick={() => setActiveTab('profile')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'profile' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'}`}
+            className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl font-medium transition-colors whitespace-nowrap text-sm ${activeTab === 'profile' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'}`}
           >
             <UserIcon className="w-5 h-5" />
             Account Profile
           </button>
           <button 
             onClick={() => setActiveTab('preferences')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'preferences' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'}`}
+            className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl font-medium transition-colors whitespace-nowrap text-sm ${activeTab === 'preferences' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'}`}
           >
             <Shield className="w-5 h-5" />
             System Preferences
           </button>
           <button 
             onClick={() => setActiveTab('notifications')}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium transition-colors ${activeTab === 'notifications' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'}`}
+            className={`flex items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl font-medium transition-colors whitespace-nowrap text-sm ${activeTab === 'notifications' ? 'bg-blue-50 text-blue-700' : 'text-gray-600 hover:bg-gray-50'}`}
           >
             <Bell className="w-5 h-5" />
             Notifications
           </button>
-          <div className="pt-4 mt-4 border-t border-gray-100">
+          <div className="hidden md:block pt-4 mt-4 border-t border-gray-100">
             <button 
               onClick={handleLogout}
               className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-red-600 hover:bg-red-50 transition-colors"
@@ -206,19 +207,20 @@ export const Settings = () => {
               Log Out
             </button>
           </div>
+          </div>
         </div>
 
         {/* Settings Content */}
-        <div className="flex-1 bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+        <div className="flex-1 bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-6 md:p-8">
           
           {activeTab === 'profile' && (
             <div className="space-y-8">
-              <div className="flex items-center gap-6 mb-8">
+              <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mb-6 sm:mb-8">
                 <div className="relative group">
                   {profile?.profilePicture ? (
-                    <img src={profile.profilePicture} alt="Profile" className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-md" />
+                    <img src={profile.profilePicture} alt="Profile" className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-white shadow-md" />
                   ) : (
-                    <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-4xl font-bold shadow-md">
+                    <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-3xl sm:text-4xl font-bold shadow-md">
                       {profile?.name?.charAt(0) || 'U'}
                     </div>
                   )}
@@ -236,10 +238,10 @@ export const Settings = () => {
                     accept="image/*"
                   />
                 </div>
-                <div>
-                  <h1 className="text-3xl font-bold text-gray-900">{profile?.name}</h1>
-                  <p className="text-gray-500 text-lg">{profile?.role} {profile?.program ? `• ${profile.program}` : ''}</p>
-                  <div className="flex items-center gap-4 mt-2">
+                <div className="text-center sm:text-left">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{profile?.name}</h1>
+                  <p className="text-gray-500 text-base sm:text-lg">{profile?.role} {profile?.program ? `• ${profile.program}` : ''}</p>
+                  <div className="flex items-center justify-center sm:justify-start gap-4 mt-2">
                     <span className="flex items-center gap-1 text-sm font-medium text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
                       <Star className="w-4 h-4" /> Reputation: {profile?.reputation || 0}
                     </span>

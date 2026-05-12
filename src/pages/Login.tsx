@@ -32,6 +32,7 @@ export const Login = () => {
   const [error, setError] = useState('');
   const [logoError, setLogoError] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [passwordStrength, setPasswordStrength] = useState('');
   const navigate = useNavigate();
   const location = useLocation();
   const { user: authUser } = useAuth();
@@ -63,6 +64,28 @@ export const Login = () => {
   useEffect(() => {
     setError('');
   }, [isLogin, isForgotPassword]);
+
+  const checkPasswordStrength = (pwd: string) => {
+    const length = pwd.length;
+    const hasNumber = /\d/.test(pwd);
+    const hasUpper = /[A-Z]/.test(pwd);
+    const hasLower = /[a-z]/.test(pwd);
+    const hasSymbol = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(pwd);
+
+    if (length < 8) {
+      return 'weak';
+    }
+
+    if (length > 12 && hasNumber && hasUpper && hasLower && hasSymbol) {
+      return 'strong';
+    }
+
+    if (hasNumber && hasUpper && hasLower) {
+      return 'medium';
+    }
+
+    return 'weak';
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -131,11 +154,11 @@ export const Login = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#f3f4f6] p-4 md:p-8 flex items-center justify-center font-sans">
-      <div className="w-full max-w-[1200px] bg-white rounded-3xl shadow-[0_20px_50px_rgba(0,_0,_0,_0.05)] overflow-hidden flex min-h-[750px] border border-gray-100">
+    <div className="min-h-screen bg-[#f3f4f6] p-2 sm:p-4 md:p-8 flex items-center justify-center font-sans">
+      <div className="w-full max-w-[1200px] bg-white rounded-2xl sm:rounded-3xl shadow-[0_20px_50px_rgba(0,_0,_0,_0.05)] overflow-hidden flex flex-col lg:flex-row min-h-0 lg:min-h-[750px] border border-gray-100">
         
-        {/* Left Panel - Ken Burns Cinematic Animation */}
-        <div className="hidden lg:flex flex-col justify-between w-[45%] bg-[#0a0a0a] text-white p-12 relative overflow-hidden">
+        {/* Cinematic Panel - Top on mobile/tablet, Left on desktop */}
+        <div className="relative w-full lg:w-[45%] h-48 sm:h-56 md:h-64 lg:h-auto bg-[#0a0a0a] text-white overflow-hidden flex-shrink-0">
           <AnimatePresence mode="popLayout">
             <motion.div 
               key={currentSlide}
@@ -169,7 +192,8 @@ export const Login = () => {
           {/* Preload next image to prevent black space */}
           <link rel="preload" as="image" href={premiumScenes[(currentSlide + 1) % premiumScenes.length].image} />
 
-          <div className="relative z-10">
+          {/* Desktop logo - hidden on mobile */}
+          <div className="relative z-10 hidden lg:block p-12 pb-0">
             <div className="bg-white/95 backdrop-blur-sm inline-block px-5 py-3.5 rounded-2xl shadow-xl border border-white/20">
               {!logoError ? (
                 <img 
@@ -184,7 +208,8 @@ export const Login = () => {
             </div>
           </div>
 
-          <div className="relative z-10 flex-1 flex flex-col justify-end mt-12 w-full">
+          {/* Text overlay */}
+          <div className="absolute bottom-0 left-0 right-0 z-10 p-4 sm:p-6 lg:p-12">
             <AnimatePresence mode="wait">
               <motion.div 
                 key={currentSlide}
@@ -193,55 +218,56 @@ export const Login = () => {
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.6 }}
               >
-                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-6 w-fit">
+                <div className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 border border-white/20 backdrop-blur-md mb-3 lg:mb-6 w-fit">
                   <span className="w-2 h-2 rounded-full bg-[#E89B2D] animate-pulse"></span>
                   <span className="text-[10px] font-bold tracking-[0.2em] text-white/90 uppercase">Nova Experience</span>
                 </div>
-                <h2 className="text-4xl font-bold mb-4 leading-tight text-white tracking-tight">
+                <h2 className="text-xl sm:text-2xl lg:text-4xl font-bold mb-1 sm:mb-2 lg:mb-4 leading-tight text-white tracking-tight">
                   {premiumScenes[currentSlide].title}
                 </h2>
-                <p className="text-white/60 text-base max-w-sm leading-relaxed font-medium italic">
+                <p className="text-white/60 text-xs sm:text-sm lg:text-base max-w-sm leading-relaxed font-medium italic hidden sm:block">
                   "{premiumScenes[currentSlide].description}"
                 </p>
               </motion.div>
             </AnimatePresence>
             
-            <div className="flex gap-2 mt-10">
+            <div className="flex gap-2 mt-3 lg:mt-10">
               {premiumScenes.map((_, index) => (
                 <button
                   key={index}
                   onClick={() => setCurrentSlide(index)}
                   className={`h-1 rounded-full transition-all duration-700 ${
-                    currentSlide === index ? 'w-10 bg-white' : 'w-2 bg-white/20 hover:bg-white/40'
+                    currentSlide === index ? 'w-8 lg:w-10 bg-white' : 'w-2 bg-white/20 hover:bg-white/40'
                   }`}
                 />
               ))}
             </div>
-          </div>
 
-          <div className="relative z-10 text-[10px] text-white/40 flex justify-between w-full mt-12 font-bold tracking-[0.2em] uppercase">
-            <span>© 2026 Nova KMS</span>
-            <span>Est. 2024</span>
+            {/* Footer - desktop only */}
+            <div className="hidden lg:flex relative z-10 text-[10px] text-white/40 justify-between w-full mt-12 font-bold tracking-[0.2em] uppercase">
+              <span>© 2026 Nova KMS</span>
+              <span>Est. 2024</span>
+            </div>
           </div>
         </div>
 
         {/* Right Panel - Auth Form */}
-        <div className="w-full lg:w-[55%] p-8 md:p-16 flex flex-col relative bg-white overflow-y-auto">
-          <div className="flex justify-between items-center w-full mb-12">
+        <div className="w-full lg:w-[55%] p-5 sm:p-8 md:p-16 flex flex-col relative bg-white overflow-y-auto">
+          <div className="flex justify-between items-center w-full mb-8 sm:mb-12">
             <div className="lg:hidden">
               {!logoError ? (
-                <img src="/nova-logo.png" alt="NOVA" className="h-8 object-contain" onError={() => setLogoError(true)} />
+                <img src="/nova-logo.png" alt="NOVA" className="h-7 sm:h-8 object-contain" onError={() => setLogoError(true)} />
               ) : (
                 <LogoFallback />
               )}
             </div>
             <div className="hidden lg:block"></div>
             {!isForgotPassword && (
-              <div className="text-sm text-gray-400 font-bold uppercase tracking-wider">
-                {isLogin ? "New here? " : "Joined already? "}
+              <div className="text-[10px] sm:text-sm text-gray-400 font-bold uppercase tracking-wider whitespace-nowrap">
+                {isLogin ? "New here? " : "Joined? "}
                 <button 
                   onClick={() => setIsLogin(!isLogin)}
-                  className="text-[#0055A4] hover:text-[#004080] transition-colors ml-1"
+                  className="text-[#0055A4] hover:text-[#004080] transition-colors ml-0.5 sm:ml-1"
                 >
                   {isLogin ? 'Create Account' : 'Sign In'}
                 </button>
@@ -251,15 +277,15 @@ export const Login = () => {
 
           <div className="max-w-[420px] w-full mx-auto flex-1 flex flex-col justify-center">
             {!isLogin && (
-              <div className="mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
-                <label className="block text-[10px] font-bold text-gray-400 mb-4 uppercase tracking-[0.2em]">Select Your Platform Role</label>
-                <div className="grid grid-cols-3 gap-3">
+              <div className="mb-6 sm:mb-8 animate-in fade-in slide-in-from-top-4 duration-700">
+                <label className="block text-[10px] font-bold text-gray-400 mb-3 sm:mb-4 uppercase tracking-[0.2em]">Select Your Platform Role</label>
+                <div className="grid grid-cols-3 gap-2 sm:gap-3">
                   {['Student', 'Teacher', 'Admin'].map((r) => (
                     <button
                       key={r}
                       type="button"
                       onClick={() => setRole(r)}
-                      className={`py-3 px-2 rounded-xl text-[11px] font-bold transition-all border uppercase tracking-widest ${
+                      className={`py-2.5 sm:py-3 px-2 rounded-xl text-[10px] sm:text-[11px] font-bold transition-all border uppercase tracking-widest ${
                         role === r 
                           ? 'bg-[#0055A4] text-white border-[#0055A4] shadow-lg scale-105' 
                           : 'bg-white text-gray-400 border-gray-100 hover:border-gray-200'
@@ -272,11 +298,11 @@ export const Login = () => {
               </div>
             )}
 
-            <div className="mb-10">
-              <h2 className="text-4xl font-black text-gray-900 mb-3 tracking-tighter">
+            <div className="mb-6 sm:mb-10">
+              <h2 className="text-3xl sm:text-4xl font-black text-gray-900 mb-2 sm:mb-3 tracking-tighter">
                 {isLogin ? 'Access Nova' : 'Join Nova'}
               </h2>
-              <p className="text-gray-400 text-sm font-medium">
+              <p className="text-gray-400 text-xs sm:text-sm font-medium">
                 {isLogin ? 'Enter your credentials to continue your journey.' : 'Unlock your academic potential today.'}
               </p>
             </div>
@@ -317,11 +343,30 @@ export const Login = () => {
               </div>
               <div className="relative group">
                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-300 group-focus-within:text-[#0055A4] transition-colors" />
-                <input type={showPassword ? "text" : "password"} required placeholder="Password" className="w-full pl-12 pr-12 py-3.5 bg-gray-50/50 border border-transparent focus:border-[#0055A4]/20 focus:bg-white rounded-2xl outline-none text-sm transition-all font-medium" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <input type={showPassword ? "text" : "password"} required placeholder="Password" className="w-full pl-12 pr-12 py-3.5 bg-gray-50/50 border border-transparent focus:border-[#0055A4]/20 focus:bg-white rounded-2xl outline-none text-sm transition-all font-medium" value={password} onChange={(e) => { const pwd = e.target.value; setPassword(pwd); setPasswordStrength(checkPasswordStrength(pwd)); }} />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-300 hover:text-gray-600 transition-colors">
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {password && (
+                <div className="mt-2 text-sm font-medium">
+                  <div className="flex items-center gap-2">
+                    <span>Password strength:</span>
+                    <span className={
+                      passwordStrength === 'strong' ? 'text-green-600' :
+                      passwordStrength === 'medium' ? 'text-yellow-600' :
+                      'text-red-600'
+                    }>{passwordStrength.charAt(0).toUpperCase() + passwordStrength.slice(1)}</span>
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-1.5 mt-1">
+                    <div className={
+                      passwordStrength === 'strong' ? 'bg-green-600 w-2/3' :
+                      passwordStrength === 'medium' ? 'bg-yellow-600 w-1/2' :
+                      'bg-red-600 w-1/3'
+                    } />
+                  </div>
+                </div>
+              )}
 
               <button type="submit" className="w-full bg-[#0055A4] hover:bg-[#004080] text-white font-black py-4 rounded-2xl transition-all shadow-xl shadow-blue-900/10 flex items-center justify-center gap-3 text-sm tracking-widest uppercase">
                 {isLogin ? 'Sign In' : 'Create Account'}

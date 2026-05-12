@@ -48,18 +48,18 @@ export const SearchResults = () => {
   });
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-          <Search className="w-8 h-8 text-blue-600" />
-          Search Results for "{query}"
+    <div className="max-w-5xl mx-auto space-y-4 sm:space-y-8 px-0 sm:px-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+          <Search className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
+          <span className="truncate">Results for "{query}"</span>
         </h1>
-        <div className="flex items-center gap-2">
-          <Filter className="w-5 h-5 text-gray-500" />
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <Filter className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
           <select 
             value={filter} 
             onChange={(e) => setFilter(e.target.value)}
-            className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5"
+            className="flex-1 sm:flex-none bg-white border border-gray-300 text-gray-900 text-xs sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2 sm:p-2.5"
           >
             <option value="all">All Types</option>
             <option value="article">Articles</option>
@@ -77,18 +77,18 @@ export const SearchResults = () => {
               <Link 
                 key={result._id || index} 
                 to={result.type === 'Article' ? `/articles/${result._id}` : `/resources`}
-                className="p-6 flex items-start gap-4 transition-colors hover:bg-gray-50 block"
+                className="p-4 sm:p-6 flex items-start gap-3 sm:gap-4 transition-colors hover:bg-gray-50 block"
               >
-                <div className="p-3 rounded-full shrink-0 bg-blue-50 text-blue-600">
-                  {result.type === 'Article' ? <FileText className="w-6 h-6" /> : <BookOpen className="w-6 h-6" />}
+                <div className="p-2 sm:p-3 rounded-full shrink-0 bg-blue-50 text-blue-600">
+                  {result.type === 'Article' ? <FileText className="w-5 h-5 sm:w-6 sm:h-6" /> : <BookOpen className="w-5 h-5 sm:w-6 sm:h-6" />}
                 </div>
-                <div className="flex-1">
-                  <h3 className="text-xl font-bold text-gray-900 mb-1">{result.title}</h3>
-                  <div className="flex items-center gap-3 text-sm text-gray-500 mb-2">
-                    <span className="font-medium text-blue-600 bg-blue-50 px-2 py-1 rounded-md">{result.type}</span>
+                <div className="flex-1 min-w-0">
+                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-1 truncate">{result.title}</h3>
+                  <div className="flex items-center gap-2 sm:gap-3 text-[10px] sm:text-sm text-gray-500 mb-2">
+                    <span className="font-medium text-blue-600 bg-blue-50 px-2 py-0.5 rounded-md">{result.type}</span>
                     <span>{result.subject?.name || 'General'}</span>
                   </div>
-                  <p className="text-gray-600 line-clamp-2">
+                  <p className="text-gray-600 line-clamp-2 text-xs sm:text-sm">
                     {result.content ? result.content.replace(/<[^>]*>?/gm, '') : 'No description available.'}
                   </p>
                 </div>

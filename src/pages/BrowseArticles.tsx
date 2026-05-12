@@ -40,32 +40,32 @@ export const BrowseArticles = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Knowledge Base</h1>
+    <div className="max-w-6xl mx-auto space-y-4 sm:space-y-8">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-6 md:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Knowledge Base</h1>
           
-          <form onSubmit={handleSearch} className="flex items-center gap-3 w-full md:w-auto">
-            <div className="relative flex-1 md:w-80">
-              <Search className="w-5 h-5 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400" />
+          <form onSubmit={handleSearch} className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            <div className="relative flex-1 sm:w-64 md:w-80">
+              <Search className="w-4 h-4 sm:w-5 sm:h-5 absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-gray-400" />
               <input 
                 type="text" 
-                placeholder="Search articles, topics..." 
-                className="w-full bg-gray-50 text-gray-900 pl-12 pr-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all"
+                placeholder="Search articles..." 
+                className="w-full bg-gray-50 text-gray-900 pl-10 sm:pl-12 pr-4 py-2.5 sm:py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white transition-all text-sm sm:text-base"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors">
+            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-medium transition-colors text-sm sm:text-base">
               Search
             </button>
           </form>
         </div>
 
-        <div className="flex items-center gap-4 mb-8 overflow-x-auto pb-2">
+        <div className="flex items-center gap-2 sm:gap-4 mb-6 sm:mb-8 overflow-x-auto pb-2 scrollbar-hide">
           <button 
             onClick={() => setSelectedSubject('')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${!selectedSubject ? 'bg-blue-50 text-blue-700' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+            className={`flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium whitespace-nowrap transition-colors text-xs sm:text-sm ${!selectedSubject ? 'bg-blue-50 text-blue-700' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
           >
             <Filter className="w-4 h-4" /> All Subjects
           </button>
@@ -73,17 +73,17 @@ export const BrowseArticles = () => {
             <button 
               key={subject._id}
               onClick={() => setSelectedSubject(subject._id)}
-              className={`px-4 py-2 rounded-lg font-medium whitespace-nowrap transition-colors ${selectedSubject === subject._id ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
+              className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg font-medium whitespace-nowrap transition-colors text-xs sm:text-sm ${selectedSubject === subject._id ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'border border-gray-200 text-gray-600 hover:bg-gray-50'}`}
             >
               {subject.name}
             </button>
           ))}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {articles.map((article: any) => (
             <Link key={article._id} to={`/articles/${article._id}`} className="group block h-full">
-              <div className="bg-white border border-gray-100 rounded-2xl p-6 h-full flex flex-col hover:border-blue-200 hover:shadow-md transition-all">
+              <div className="bg-white border border-gray-100 rounded-xl sm:rounded-2xl p-4 sm:p-6 h-full flex flex-col hover:border-blue-200 hover:shadow-md transition-all card-hover">
                 <div className="flex items-center gap-2 mb-4">
                   <span className="px-2.5 py-1 bg-blue-50 text-blue-700 rounded-md text-xs font-semibold uppercase tracking-wider">
                     {article.subject?.name || 'Subject'}

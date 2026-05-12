@@ -85,24 +85,24 @@ export const Assignments = () => {
   // ==============================
   if (user?.role === 'Teacher' || user?.role === 'Admin') {
     return (
-      <div className="max-w-6xl mx-auto space-y-8">
-        <div className="flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <FileText className="w-8 h-8 text-blue-600" />
+      <div className="max-w-6xl mx-auto space-y-4 sm:space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+            <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" />
             Manage Assignments
           </h1>
           <button 
             onClick={() => setShowCreate(!showCreate)}
-            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+            className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-medium transition-colors text-sm self-start sm:self-auto"
           >
-            {showCreate ? 'Cancel' : <><Plus className="w-5 h-5" /> Create Assignment</>}
+            {showCreate ? 'Cancel' : <><Plus className="w-4 h-4 sm:w-5 sm:h-5" /> Create Assignment</>}
           </button>
         </div>
 
         {/* Dashboard Stats */}
         {!showCreate && (
-           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex gap-4 items-center">
+           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
+           <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 flex gap-3 sm:gap-4 items-center">
              <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600">
                <FileText className="w-6 h-6" />
              </div>
@@ -111,7 +111,7 @@ export const Assignments = () => {
                <div className="text-2xl font-bold">{assignments.length}</div>
              </div>
            </div>
-           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex gap-4 items-center">
+           <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 flex gap-3 sm:gap-4 items-center">
              <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-600">
                <Users className="w-6 h-6" />
              </div>
@@ -120,7 +120,7 @@ export const Assignments = () => {
                <div className="text-2xl font-bold">84</div>
              </div>
            </div>
-           <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex gap-4 items-center">
+           <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 flex gap-3 sm:gap-4 items-center">
              <div className="w-12 h-12 bg-orange-50 rounded-xl flex items-center justify-center text-orange-600">
                <Activity className="w-6 h-6" />
              </div>
@@ -134,8 +134,8 @@ export const Assignments = () => {
 
         {/* Creation Form */}
         {showCreate && (
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-6">Create New Assignment</h2>
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-8">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4 sm:mb-6">Create New Assignment</h2>
             <form onSubmit={handleCreate} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -209,20 +209,34 @@ export const Assignments = () => {
 
         {/* Assignments List (Teacher View) */}
         {!showCreate && (
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-              <h2 className="font-bold text-lg text-gray-900">Assigned Work</h2>
-              <span className="text-sm font-medium text-gray-500">Sorted by Nearest Due Date</span>
+          <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+            <div className="p-4 sm:p-6 border-b border-gray-100 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 bg-gray-50/50">
+              <h2 className="font-bold text-base sm:text-lg text-gray-900">Assigned Work</h2>
+              <span className="text-xs sm:text-sm font-medium text-gray-500">Sorted by Nearest Due Date</span>
             </div>
             <div className="divide-y divide-gray-50 text-left">
-              <div className="grid grid-cols-12 gap-4 p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider items-center">
+              <div className="hidden md:grid grid-cols-12 gap-4 p-4 text-xs font-semibold text-gray-500 uppercase tracking-wider items-center">
                 <div className="col-span-5">Assignment Name</div>
                 <div className="col-span-3">Course</div>
                 <div className="col-span-2 text-center">Submissions</div>
                 <div className="col-span-2 text-right">Actions</div>
               </div>
               {assignments.map((assignment) => (
-                <div key={assignment._id} className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-blue-50/30 transition-colors">
+                <div key={assignment._id} className="p-4 hover:bg-blue-50/30 transition-colors">
+                  {/* Mobile: Stacked layout */}
+                  <div className="md:hidden space-y-2">
+                    <h3 className="font-bold text-gray-900 text-sm">{assignment.title}</h3>
+                    <div className="flex items-center gap-2 text-xs text-gray-500">
+                      <span className="px-2 py-0.5 bg-blue-50 text-blue-700 rounded-md font-medium">{assignment.course}</span>
+                      <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {new Date(assignment.dueDate).toLocaleDateString()}</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs text-gray-500">{assignment.submissions || 0}/42 submissions</span>
+                      <button className="px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs font-medium rounded-lg transition-colors">Grade</button>
+                    </div>
+                  </div>
+                  {/* Desktop: Grid layout */}
+                  <div className="hidden md:grid grid-cols-12 gap-4 items-center">
                   <div className="col-span-5">
                     <h3 className="font-bold text-gray-900">{assignment.title}</h3>
                     <p className="text-xs text-gray-500 flex items-center gap-1 mt-1">
@@ -245,6 +259,7 @@ export const Assignments = () => {
                       Grade
                     </button>
                   </div>
+                  </div>
                 </div>
               ))}
               {assignments.length === 0 && (
@@ -261,14 +276,14 @@ export const Assignments = () => {
   // STUDENT VIEW 
   // ==============================
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      <div className="flex items-center gap-4 mb-8">
-        <div className="w-16 h-16 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
-          <FileText className="w-8 h-8" />
+    <div className="max-w-5xl mx-auto space-y-4 sm:space-y-8">
+      <div className="flex items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-8">
+        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 flex-shrink-0">
+          <FileText className="w-6 h-6 sm:w-8 sm:h-8" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">My Assignments</h1>
-          <p className="text-gray-500 mt-1">View your pending tasks and submit your work.</p>
+          <h1 className="text-xl sm:text-3xl font-bold text-gray-900">My Assignments</h1>
+          <p className="text-gray-500 mt-0.5 sm:mt-1 text-xs sm:text-base">View pending tasks and submit your work.</p>
         </div>
       </div>
 
@@ -277,18 +292,18 @@ export const Assignments = () => {
           const isOverdue = new Date(assignment.dueDate) < new Date();
           return (
             <Link key={assignment._id} to={`/assignments/${assignment._id}`} className="block group">
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 flex items-center justify-between hover:border-blue-200 transition-all hover:shadow-md">
-                <div className="flex items-center gap-6">
-                  <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
-                    <FileText className="w-6 h-6" />
+              <div className="bg-white rounded-xl sm:rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3 hover:border-blue-200 transition-all hover:shadow-md">
+                <div className="flex items-start sm:items-center gap-3 sm:gap-6">
+                  <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-lg sm:rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform flex-shrink-0">
+                    <FileText className="w-5 h-5 sm:w-6 sm:h-6" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{assignment.title}</h3>
-                    <div className="flex items-center gap-4 text-sm text-gray-500 mt-1">
+                    <h3 className="text-base sm:text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">{assignment.title}</h3>
+                    <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500 mt-1">
                       <span className="font-medium text-gray-700">{assignment.course}</span>
                       <span className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        Due: {new Date(assignment.dueDate).toLocaleString()}
+                        <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+                        Due: {new Date(assignment.dueDate).toLocaleDateString()}
                       </span>
                       <span>{assignment.totalPoints} pts</span>
                     </div>

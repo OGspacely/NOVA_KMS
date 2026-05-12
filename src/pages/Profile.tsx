@@ -65,16 +65,16 @@ export const Profile = () => {
   if (loading) return <div className="p-8 text-center text-gray-500">Loading profile...</div>;
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-        <div className="flex items-center gap-6 mb-8">
-          <div className="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-4xl font-bold">
+    <div className="max-w-4xl mx-auto space-y-4 sm:space-y-8">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-6 md:p-8">
+        <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-3xl sm:text-4xl font-bold flex-shrink-0">
             {profile?.name?.charAt(0) || 'U'}
           </div>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">{profile?.name}</h1>
-            <p className="text-gray-500 text-lg">{profile?.role} {profile?.program ? `• ${profile.program}` : ''}</p>
-            <div className="flex items-center gap-4 mt-2">
+          <div className="text-center sm:text-left">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{profile?.name}</h1>
+            <p className="text-gray-500 text-base sm:text-lg">{profile?.role} {profile?.program ? `• ${profile.program}` : ''}</p>
+            <div className="flex items-center justify-center sm:justify-start gap-4 mt-2">
               <span className="flex items-center gap-1 text-sm font-medium text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
                 <Star className="w-4 h-4" /> Reputation: {profile?.reputation || 0}
               </span>

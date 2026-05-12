@@ -27,15 +27,15 @@ export const Feedback = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto space-y-8">
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-        <div className="flex items-center gap-4 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
-            <MessageSquare className="w-6 h-6" />
+    <div className="max-w-3xl mx-auto space-y-4 sm:space-y-8">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-6 md:p-8">
+        <div className="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 flex-shrink-0">
+            <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">Send Feedback</h1>
-            <p className="text-gray-500">Help us improve NOVA by sharing your thoughts, suggestions, or reporting issues.</p>
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold text-gray-900">Send Feedback</h1>
+            <p className="text-gray-500 text-xs sm:text-sm">Help us improve NOVA by sharing your thoughts.</p>
           </div>
         </div>
 

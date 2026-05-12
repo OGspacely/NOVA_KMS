@@ -50,16 +50,16 @@ export const AdminDashboard = () => {
 
   return (
     <div className="max-w-7xl mx-auto space-y-8">
-      <div className="flex items-center justify-between mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors text-sm font-medium">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-xl hover:bg-gray-50 transition-colors text-xs sm:text-sm font-medium">
             <Download className="w-4 h-4" />
-            Export Report
+            <span className="hidden sm:inline">Export</span> Report
           </button>
-          <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-sm font-medium">
+          <button className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors text-xs sm:text-sm font-medium">
             <MessageSquare className="w-4 h-4" />
-            Send Announcement
+            <span className="hidden sm:inline">Send</span> Announce
           </button>
         </div>
       </div>
@@ -70,52 +70,52 @@ export const AdminDashboard = () => {
           <Activity className="w-5 h-5 text-blue-600" />
           System Overview
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between">
-            <div>
-              <div className="text-sm text-gray-500 font-medium mb-1">Total Users</div>
-              <div className="text-3xl font-bold text-gray-900">{stats.users}</div>
-              <div className="text-xs text-green-600 mt-2 flex items-center gap-1">
-                <Activity className="w-3 h-3" /> +12% this week
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <div className="min-w-0">
+              <div className="text-[10px] sm:text-sm text-gray-500 font-medium mb-0.5 sm:mb-1 truncate">Total Users</div>
+              <div className="text-xl sm:text-3xl font-bold text-gray-900">{stats.users}</div>
+              <div className="text-[10px] sm:text-xs text-green-600 mt-1 sm:mt-2 flex items-center gap-1">
+                <Activity className="w-3 h-3" /> +12%
               </div>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600">
-              <Users className="w-6 h-6" />
+            <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-2xl bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
+              <Users className="w-4 h-4 sm:w-6 sm:h-6" />
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between">
-            <div>
-              <div className="text-sm text-gray-500 font-medium mb-1">Active Users</div>
-              <div className="text-3xl font-bold text-gray-900">{Math.floor(stats.users * 0.4) || 24}</div>
-              <div className="text-xs text-gray-500 mt-2">Daily active</div>
+          <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <div className="min-w-0">
+              <div className="text-[10px] sm:text-sm text-gray-500 font-medium mb-0.5 sm:mb-1 truncate">Active Users</div>
+              <div className="text-xl sm:text-3xl font-bold text-gray-900">{Math.floor(stats.users * 0.4) || 24}</div>
+              <div className="text-[10px] sm:text-xs text-gray-500 mt-1 sm:mt-2">Daily active</div>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-green-50 flex items-center justify-center text-green-600">
-              <Activity className="w-6 h-6" />
+            <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-2xl bg-green-50 flex items-center justify-center text-green-600 shrink-0">
+              <Activity className="w-4 h-4 sm:w-6 sm:h-6" />
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between">
-            <div>
-              <div className="text-sm text-gray-500 font-medium mb-1">Total Content</div>
-              <div className="text-3xl font-bold text-gray-900">{stats.articles.total}</div>
-              <div className="text-xs text-green-600 mt-2 flex items-center gap-1">
-                <Activity className="w-3 h-3" /> +5 new today
+          <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <div className="min-w-0">
+              <div className="text-[10px] sm:text-sm text-gray-500 font-medium mb-0.5 sm:mb-1 truncate">Total Content</div>
+              <div className="text-xl sm:text-3xl font-bold text-gray-900">{stats.articles.total}</div>
+              <div className="text-[10px] sm:text-xs text-green-600 mt-1 sm:mt-2 flex items-center gap-1">
+                <Activity className="w-3 h-3" /> +5
               </div>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600">
-              <FileText className="w-6 h-6" />
+            <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 shrink-0">
+              <FileText className="w-4 h-4 sm:w-6 sm:h-6" />
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between">
-            <div>
-              <div className="text-sm text-gray-500 font-medium mb-1">Platform Usage</div>
-              <div className="text-3xl font-bold text-gray-900">84%</div>
-              <div className="text-xs text-gray-500 mt-2">Capacity load</div>
+          <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <div className="min-w-0">
+              <div className="text-[10px] sm:text-sm text-gray-500 font-medium mb-0.5 sm:mb-1 truncate">Usage</div>
+              <div className="text-xl sm:text-3xl font-bold text-gray-900">84%</div>
+              <div className="text-[10px] sm:text-xs text-gray-500 mt-1 sm:mt-2">Capacity load</div>
             </div>
-            <div className="w-12 h-12 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600">
-              <Database className="w-6 h-6" />
+            <div className="w-8 h-8 sm:w-12 sm:h-12 rounded-lg sm:rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 shrink-0">
+              <Database className="w-4 h-4 sm:w-6 sm:h-6" />
             </div>
           </div>
         </div>
@@ -129,35 +129,35 @@ export const AdminDashboard = () => {
               <ShieldAlert className="w-5 h-5 text-orange-600" />
               Content Moderation
             </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
               <div 
                 onClick={() => { setArticleStatus('Pending'); setActiveView('articles'); }}
-                className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:border-orange-200 transition-all text-center"
+                className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:border-orange-200 transition-all text-center"
               >
-                <Clock className="w-6 h-6 text-orange-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-gray-900">{stats.articles.pending}</div>
-                <div className="text-xs text-gray-500 mt-1">Pending Review</div>
+                <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-orange-500 mx-auto mb-2" />
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">{stats.articles.pending}</div>
+                <div className="text-[10px] sm:text-xs text-gray-500 mt-1">Pending</div>
               </div>
               <div 
                 onClick={() => { setArticleStatus('Approved'); setActiveView('articles'); }}
-                className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:border-green-200 transition-all text-center"
+                className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:border-green-200 transition-all text-center"
               >
-                <CheckCircle className="w-6 h-6 text-green-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-gray-900">{stats.articles.approved}</div>
-                <div className="text-xs text-gray-500 mt-1">Approved</div>
+                <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-green-500 mx-auto mb-2" />
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">{stats.articles.approved}</div>
+                <div className="text-[10px] sm:text-xs text-gray-500 mt-1">Approved</div>
               </div>
               <div 
                 onClick={() => { setArticleStatus('Rejected'); setActiveView('articles'); }}
-                className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:border-red-200 transition-all text-center"
+                className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:border-red-200 transition-all text-center"
               >
-                <XCircle className="w-6 h-6 text-red-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-gray-900">{stats.articles.rejected}</div>
-                <div className="text-xs text-gray-500 mt-1">Rejected</div>
+                <XCircle className="w-5 h-5 sm:w-6 sm:h-6 text-red-500 mx-auto mb-2" />
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">{stats.articles.rejected}</div>
+                <div className="text-[10px] sm:text-xs text-gray-500 mt-1">Rejected</div>
               </div>
-              <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:border-purple-200 transition-all text-center">
-                <AlertTriangle className="w-6 h-6 text-purple-500 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-gray-900">0</div>
-                <div className="text-xs text-gray-500 mt-1">Flagged Content</div>
+              <div className="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 cursor-pointer hover:border-purple-200 transition-all text-center">
+                <AlertTriangle className="w-5 h-5 sm:w-6 sm:h-6 text-purple-500 mx-auto mb-2" />
+                <div className="text-xl sm:text-2xl font-bold text-gray-900">0</div>
+                <div className="text-[10px] sm:text-xs text-gray-500 mt-1">Flagged</div>
               </div>
             </div>
           </section>
@@ -261,7 +261,7 @@ export const AdminDashboard = () => {
           <Settings className="w-5 h-5 text-gray-600" />
           Administrative Controls
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <div 
             onClick={() => setActiveView('users')}
             className="p-5 bg-white border border-gray-100 rounded-2xl hover:border-blue-200 hover:shadow-sm transition-all cursor-pointer flex items-center gap-4"

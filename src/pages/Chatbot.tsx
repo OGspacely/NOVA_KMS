@@ -71,28 +71,28 @@ export const Chatbot = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto h-[calc(100vh-8rem)] flex flex-col bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
-      <div className="p-6 border-b border-gray-100 bg-blue-50/50">
-        <div className="flex items-center gap-4">
-          <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white">
-            <Bot className="w-6 h-6" />
+    <div className="max-w-4xl mx-auto h-[calc(100vh-7rem)] sm:h-[calc(100vh-8rem)] flex flex-col bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="p-4 sm:p-6 border-b border-gray-100 bg-blue-50/50">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-600 flex items-center justify-center text-white flex-shrink-0">
+            <Bot className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">NOVA AI Assistant</h1>
-            <p className="text-gray-500">Ask me anything about your courses, subjects, or general knowledge.</p>
+          <div className="min-w-0">
+            <h1 className="text-lg sm:text-2xl font-bold text-gray-900">NOVA AI Assistant</h1>
+            <p className="text-gray-500 text-xs sm:text-sm truncate">Ask me anything about your courses or subjects.</p>
           </div>
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-6 space-y-6">
+      <div className="flex-1 overflow-y-auto p-3 sm:p-6 space-y-4 sm:space-y-6">
         {messages.map((message) => (
           <div key={message.id} className={`flex gap-4 ${message.role === 'user' ? 'flex-row-reverse' : ''}`}>
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
+            <div className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0 ${
               message.role === 'user' ? 'bg-gray-100 text-gray-600' : 'bg-blue-100 text-blue-600'
             }`}>
               {message.role === 'user' ? <User className="w-5 h-5" /> : <Bot className="w-5 h-5" />}
             </div>
-            <div className={`max-w-[80%] rounded-2xl p-4 ${
+            <div className={`max-w-[85%] sm:max-w-[80%] rounded-2xl p-3 sm:p-4 text-sm sm:text-base ${
               message.role === 'user' 
                 ? 'bg-blue-600 text-white rounded-tr-none' 
                 : 'bg-gray-50 text-gray-800 border border-gray-100 rounded-tl-none'
@@ -115,22 +115,22 @@ export const Chatbot = () => {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 border-t border-gray-100 bg-white">
-        <form onSubmit={handleSend} className="flex gap-4">
+      <div className="p-3 sm:p-4 border-t border-gray-100 bg-white safe-bottom">
+        <form onSubmit={handleSend} className="flex gap-2 sm:gap-4">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder="Type your message here..."
-            className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Type your message..."
+            className="flex-1 bg-gray-50 border border-gray-200 rounded-xl px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
             disabled={isLoading}
           />
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-medium transition-colors disabled:opacity-50 flex items-center gap-2"
           >
-            <Send className="w-5 h-5" />
+            <Send className="w-4 h-4 sm:w-5 sm:h-5" />
             <span className="hidden sm:inline">Send</span>
           </button>
         </form>

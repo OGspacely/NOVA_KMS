@@ -111,21 +111,21 @@ export const Quizzes = () => {
   if (user?.role === 'Teacher' || user?.role === 'Admin') {
     if (showCreate) {
       return (
-        <div className="max-w-4xl mx-auto space-y-8">
-           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <Settings className="w-8 h-8 text-purple-600" />
+        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-8">
+           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+              <Settings className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
               Create New Quiz
             </h1>
             <button 
               onClick={() => setShowCreate(false)}
-              className="text-gray-600 hover:bg-gray-100 px-4 py-2 rounded-xl transition-colors font-medium border border-gray-200"
+              className="text-gray-600 hover:bg-gray-100 px-3 sm:px-4 py-2 rounded-xl transition-colors font-medium border border-gray-200 text-sm self-start sm:self-auto"
             >
               Cancel
             </button>
           </div>
 
-          <form onSubmit={handleSaveQuiz} className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 space-y-6">
+          <form onSubmit={handleSaveQuiz} className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-6 md:p-8 space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Quiz Title</label>
@@ -227,26 +227,26 @@ export const Quizzes = () => {
 
     // Teacher Manage Quizzes Dashboard
     return (
-      <div className="max-w-6xl mx-auto space-y-8">
-        <div className="flex items-center justify-between mb-8">
+      <div className="max-w-6xl mx-auto space-y-4 sm:space-y-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4 sm:mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-              <BrainCircuit className="w-8 h-8 text-purple-600" />
+            <h1 className="text-xl sm:text-3xl font-bold text-gray-900 flex items-center gap-2 sm:gap-3">
+              <BrainCircuit className="w-6 h-6 sm:w-8 sm:h-8 text-purple-600" />
               Manage Quizzes
             </h1>
-            <p className="text-gray-500 mt-1">Create and monitor assessments for your students.</p>
+            <p className="text-gray-500 mt-1 text-sm sm:text-base">Create and monitor assessments.</p>
           </div>
           <button 
             onClick={() => setShowCreate(true)}
-            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-6 py-3 rounded-xl font-medium transition-colors"
+            className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-medium transition-colors text-sm self-start sm:self-auto"
           >
-            <Plus className="w-5 h-5" />
-            Create New Quiz
+            <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
+            Create Quiz
           </button>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 flex gap-4 items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 mb-6 sm:mb-8">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 flex gap-3 sm:gap-4 items-center">
             <div className="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center text-purple-600">
               <BrainCircuit className="w-6 h-6" />
             </div>
@@ -312,10 +312,10 @@ export const Quizzes = () => {
       const percentage = (score / activeQuiz.questions.length) * 100;
       return (
         <div className="max-w-3xl mx-auto space-y-8">
-          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-12 text-center">
-            <Award className="w-24 h-24 text-yellow-500 mx-auto mb-6" />
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">Quiz Completed!</h2>
-            <p className="text-xl text-gray-600 mb-8">You scored {score} out of {activeQuiz.questions.length} ({percentage.toFixed(0)}%)</p>
+          <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 sm:p-12 text-center">
+            <Award className="w-16 h-16 sm:w-24 sm:h-24 text-yellow-500 mx-auto mb-4 sm:mb-6" />
+            <h2 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">Quiz Completed!</h2>
+            <p className="text-base sm:text-xl text-gray-600 mb-6 sm:mb-8">You scored {score} out of {activeQuiz.questions.length} ({percentage.toFixed(0)}%)</p>
             
             <div className="space-y-6 text-left mb-8">
               {activeQuiz.questions.map((q: any, i: number) => (
@@ -357,10 +357,10 @@ export const Quizzes = () => {
     const question = activeQuiz.questions[currentQuestion];
     return (
       <div className="max-w-3xl mx-auto space-y-8">
-        <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-2xl font-bold text-gray-900">{activeQuiz.title}</h2>
-            <span className="text-gray-500 font-medium">Question {currentQuestion + 1} of {activeQuiz.questions.length}</span>
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6 sm:mb-8">
+            <h2 className="text-lg sm:text-2xl font-bold text-gray-900">{activeQuiz.title}</h2>
+            <span className="text-sm text-gray-500 font-medium">Question {currentQuestion + 1} of {activeQuiz.questions.length}</span>
           </div>
           
           <div className="mb-8">
@@ -402,18 +402,18 @@ export const Quizzes = () => {
 
   // Student Default Quizzes View
   return (
-    <div className="max-w-6xl mx-auto space-y-8">
-      <div className="flex items-center gap-4 mb-8">
-        <div className="w-16 h-16 rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600">
-          <BrainCircuit className="w-8 h-8" />
+    <div className="max-w-6xl mx-auto space-y-4 sm:space-y-8">
+      <div className="flex items-start sm:items-center gap-3 sm:gap-4 mb-4 sm:mb-8">
+        <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl bg-purple-50 flex items-center justify-center text-purple-600 flex-shrink-0">
+          <BrainCircuit className="w-6 h-6 sm:w-8 sm:h-8" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Practice Quizzes</h1>
-          <p className="text-gray-500 mt-1">Test your knowledge, complete assigned quizzes, and track progress.</p>
+          <h1 className="text-xl sm:text-3xl font-bold text-gray-900">Practice Quizzes</h1>
+          <p className="text-gray-500 mt-0.5 sm:mt-1 text-xs sm:text-base">Test your knowledge and track progress.</p>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {quizzes.map((quiz) => (
           <div key={quiz.id} className="bg-white border border-gray-100 rounded-2xl p-6 hover:border-purple-200 hover:shadow-md transition-all flex flex-col">
             <div className="flex items-center gap-2 mb-4">

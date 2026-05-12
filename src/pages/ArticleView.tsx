@@ -68,74 +68,76 @@ export const ArticleView = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-        <div className="flex items-center gap-3 mb-6">
-          <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold uppercase tracking-wider">
+    <div className="max-w-4xl mx-auto space-y-4 sm:space-y-8 px-0 sm:px-4">
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-8">
+        <div className="flex flex-wrap items-center gap-2 mb-4 sm:mb-6">
+          <span className="px-2 sm:px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
             {article.subject?.name || 'Subject'}
           </span>
-          <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold uppercase tracking-wider">
+          <span className="px-2 sm:px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
             {article.topic?.name || 'Topic'}
           </span>
-          <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-semibold uppercase tracking-wider">
+          <span className="px-2 sm:px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
             Grade {article.gradeLevel}
           </span>
         </div>
 
-        <h1 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">{article.title}</h1>
+        <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-4 sm:mb-6 leading-tight">{article.title}</h1>
         
         {article.status === 'Pending' && (user?.role === 'Admin' || user?.role === 'Teacher') && (
-          <div className="mb-8 p-6 bg-yellow-50 rounded-2xl border border-yellow-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-yellow-50 rounded-xl sm:rounded-2xl border border-yellow-200 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div>
-              <h3 className="font-bold text-yellow-800 text-lg">Pending Review</h3>
-              <p className="text-yellow-700 mt-1 text-sm">Please review the content and attachments below before approving.</p>
+              <h3 className="font-bold text-yellow-800 text-base sm:text-lg">Pending Review</h3>
+              <p className="text-yellow-700 mt-1 text-xs sm:text-sm">Please review the content and attachments below before approving.</p>
             </div>
-            <div className="flex gap-3 w-full sm:w-auto">
-              <button onClick={() => handleReviewAction('approve')} className="flex-1 sm:flex-none px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white font-medium rounded-xl transition-colors flex justify-center items-center gap-2">
-                <Check className="w-5 h-5" /> Approve
+            <div className="flex gap-2 sm:gap-3 w-full lg:w-auto">
+              <button onClick={() => handleReviewAction('approve')} className="flex-1 lg:flex-none px-4 sm:px-6 py-2 sm:py-2.5 bg-green-600 hover:bg-green-700 text-white text-sm sm:text-base font-medium rounded-lg sm:rounded-xl transition-colors flex justify-center items-center gap-2">
+                <Check className="w-4 h-4 sm:w-5 sm:h-5" /> Approve
               </button>
-              <button onClick={() => handleReviewAction('reject')} className="flex-1 sm:flex-none px-6 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-xl transition-colors flex justify-center items-center gap-2">
-                <XCircle className="w-5 h-5" /> Reject
+              <button onClick={() => handleReviewAction('reject')} className="flex-1 lg:flex-none px-4 sm:px-6 py-2 sm:py-2.5 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base font-medium rounded-lg sm:rounded-xl transition-colors flex justify-center items-center gap-2">
+                <XCircle className="w-4 h-4 sm:w-5 sm:h-5" /> Reject
               </button>
             </div>
           </div>
         )}
         
-        <div className="flex items-center justify-between py-6 border-y border-gray-100 mb-8">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-lg">
+        <div className="flex flex-col md:flex-row md:items-center justify-between py-4 sm:py-6 border-y border-gray-100 mb-6 sm:mb-8 gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold text-base sm:text-lg">
               {article.author?.name?.charAt(0) || 'U'}
             </div>
             <div>
-              <div className="font-medium text-gray-900">{article.author?.name || 'Unknown Author'}</div>
-              <div className="text-sm text-gray-500 flex items-center gap-2">
-                <Calendar className="w-4 h-4" />
+              <div className="font-medium text-gray-900 text-sm sm:text-base">{article.author?.name || 'Unknown Author'}</div>
+              <div className="text-[10px] sm:text-sm text-gray-500 flex items-center gap-1.5 sm:gap-2">
+                <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                 {new Date(article.createdAt).toLocaleDateString()}
               </div>
             </div>
           </div>
           
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1 mr-4">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex items-center gap-1 mr-2 sm:mr-4">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button 
                   key={star} 
                   onClick={() => handleRate(star)}
-                  className={`p-1 transition-colors ${star <= userRating ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-400'}`}
+                  className={`p-0.5 sm:p-1 transition-colors ${star <= userRating ? 'text-yellow-400' : 'text-gray-300 hover:text-yellow-400'}`}
                 >
-                  <Star className="w-6 h-6 fill-current" />
+                  <Star className="w-4 h-4 sm:w-6 sm:h-6 fill-current" />
                 </button>
               ))}
-              <span className="text-sm text-gray-500 ml-2">({article.rating?.toFixed(1) || 0})</span>
+              <span className="text-[10px] sm:text-sm text-gray-500 ml-1 sm:ml-2">({article.rating?.toFixed(1) || 0})</span>
             </div>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors text-gray-700 font-medium">
-              <ThumbsUp className="w-5 h-5" />
-              <span>{article.likes?.length || 0}</span>
-            </button>
-            <button className="flex items-center gap-2 px-4 py-2 rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors text-gray-700 font-medium">
-              <Bookmark className="w-5 h-5" />
-              <span>Save</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <button className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors text-gray-700 font-medium text-xs sm:text-sm">
+                <ThumbsUp className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>{article.likes?.length || 0}</span>
+              </button>
+              <button className="flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors text-gray-700 font-medium text-xs sm:text-sm">
+                <Bookmark className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span>Save</span>
+              </button>
+            </div>
           </div>
         </div>
 
@@ -224,39 +226,39 @@ export const ArticleView = () => {
         )}
       </div>
 
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-        <h3 className="text-2xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-          <MessageSquare className="w-6 h-6 text-blue-600" />
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-8">
+        <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6 flex items-center gap-3">
+          <MessageSquare className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" />
           Discussion ({comments.length})
         </h3>
         
-        <form onSubmit={handleCommentSubmit} className="mb-8">
+        <form onSubmit={handleCommentSubmit} className="mb-6 sm:mb-8">
           <textarea
-            className="w-full px-4 py-3 border border-gray-200 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none"
+            className="w-full px-4 py-3 border border-gray-200 rounded-xl sm:rounded-2xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all resize-none text-sm sm:text-base"
             rows={3}
             placeholder="Add to the discussion..."
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
           ></textarea>
-          <div className="flex justify-end mt-3">
-            <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-xl font-medium transition-colors">
+          <div className="flex justify-end mt-2 sm:mt-3">
+            <button type="submit" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg sm:rounded-xl font-medium transition-colors text-sm sm:text-base">
               Post Comment
             </button>
           </div>
         </form>
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           {comments.map((comment: any) => (
-            <div key={comment._id} className="flex gap-4">
-              <div className="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center font-bold text-gray-600">
+            <div key={comment._id} className="flex gap-3 sm:gap-4">
+              <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gray-200 flex-shrink-0 flex items-center justify-center font-bold text-gray-600 text-xs sm:text-sm">
                 {comment.author?.name?.charAt(0) || 'U'}
               </div>
-              <div className="flex-1 bg-gray-50 rounded-2xl p-4">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-semibold text-gray-900">{comment.author?.name || 'Unknown'}</span>
-                  <span className="text-xs text-gray-500">{new Date(comment.createdAt).toLocaleDateString()}</span>
+              <div className="flex-1 bg-gray-50 rounded-xl sm:rounded-2xl p-3 sm:p-4">
+                <div className="flex items-center justify-between mb-1 sm:mb-2">
+                  <span className="font-semibold text-gray-900 text-xs sm:text-sm">{comment.author?.name || 'Unknown'}</span>
+                  <span className="text-[10px] sm:text-xs text-gray-500">{new Date(comment.createdAt).toLocaleDateString()}</span>
                 </div>
-                <p className="text-gray-700">{comment.content}</p>
+                <p className="text-gray-700 text-xs sm:text-sm leading-relaxed">{comment.content}</p>
               </div>
             </div>
           ))}

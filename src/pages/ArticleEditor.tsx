@@ -116,15 +116,15 @@ export const ArticleEditor = () => {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Create Knowledge</h1>
+      <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-4 sm:p-6 md:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 sm:gap-6 mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Create Knowledge</h1>
           
-          <div className="flex bg-gray-100 p-1 rounded-xl self-start md:self-auto">
+          <div className="flex bg-gray-100 p-1 rounded-xl self-start sm:self-auto">
             <button
               type="button"
               onClick={() => setCreationType('article')}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-medium transition-all text-sm ${
                 creationType === 'article' 
                   ? 'bg-white text-blue-600 shadow-sm' 
                   : 'text-gray-600 hover:text-gray-900'
@@ -136,7 +136,7 @@ export const ArticleEditor = () => {
             <button
               type="button"
               onClick={() => setCreationType('video')}
-              className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium transition-all ${
+              className={`flex items-center gap-1.5 sm:gap-2 px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg font-medium transition-all text-sm ${
                 creationType === 'video' 
                   ? 'bg-white text-red-600 shadow-sm' 
                   : 'text-gray-600 hover:text-gray-900'
@@ -331,17 +331,17 @@ export const ArticleEditor = () => {
             />
           </div>
 
-          <div className="flex items-center justify-end gap-4 pt-6 border-t border-gray-100">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-end gap-3 sm:gap-4 pt-6 border-t border-gray-100">
             <button
               type="button"
               onClick={(e) => handleSubmit(e, false)}
-              className="px-6 py-3 rounded-xl font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 transition-colors text-sm sm:text-base text-center"
             >
               Save as Draft
             </button>
             <button
               type="submit"
-              className="px-6 py-3 rounded-xl font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm shadow-blue-200"
+              className="px-4 sm:px-6 py-2.5 sm:py-3 rounded-xl font-medium text-white bg-blue-600 hover:bg-blue-700 transition-colors shadow-sm shadow-blue-200 text-sm sm:text-base text-center"
             >
               Submit for Review
             </button>

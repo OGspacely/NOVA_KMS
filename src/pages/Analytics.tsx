@@ -186,16 +186,16 @@ export const Analytics = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4 lg:p-8 font-sans">
-      <div className="max-w-[1400px] mx-auto bg-gradient-to-br from-[#FDFBF7] via-[#F9F5EB] to-[#F3EFE6] rounded-[40px] p-8 lg:p-12 shadow-sm border border-white/50">
+    <div className="min-h-screen bg-gray-50 p-2 sm:p-4 lg:p-8 font-sans">
+      <div className="max-w-[1400px] mx-auto bg-gradient-to-br from-[#FDFBF7] via-[#F9F5EB] to-[#F3EFE6] rounded-2xl sm:rounded-[40px] p-4 sm:p-6 lg:p-12 shadow-sm border border-white/50">
         
         {/* Header Section */}
-        <div className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-12 gap-8">
-          <div className="flex-1">
-            <div className="flex flex-col md:flex-row md:items-center justify-between mb-8 gap-4">
-              <h1 className="text-4xl lg:text-5xl font-light text-gray-900 flex items-center gap-4">
-                <div>Welcome in, <span className="font-semibold">{user?.name?.split(' ')[0] || 'User'}</span></div>
-                <span className="hidden md:inline-flex items-center px-4 py-1.5 rounded-full text-sm font-medium bg-indigo-50 text-indigo-700 border border-indigo-100 shadow-sm">
+        <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-6 sm:mb-12 gap-6 sm:gap-8">
+          <div className="flex-1 w-full space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <h1 className="text-2xl sm:text-3xl lg:text-5xl font-light text-gray-900 flex flex-wrap items-center gap-2 sm:gap-4">
+                <div>Welcome, <span className="font-semibold">{user?.name?.split(' ')[0] || 'User'}</span></div>
+                <span className="inline-flex items-center px-3 sm:px-4 py-1 sm:py-1.5 rounded-full text-[10px] sm:text-sm font-medium bg-indigo-50 text-indigo-700 border border-indigo-100 shadow-sm">
                   {user?.role || 'Student'} View
                 </span>
               </h1>
@@ -226,11 +226,11 @@ export const Analytics = () => {
             </div>
             
             {/* Pill Stats */}
-            <div className="flex flex-wrap items-center gap-4 lg:gap-8">
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 lg:gap-8">
               {currentData.pillStats.map((stat, idx) => (
-                <div key={idx} className="flex flex-col items-center gap-2 group cursor-pointer">
-                  <span className="text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">{stat.label}</span>
-                  <div className={`px-6 py-2 rounded-full text-sm font-medium transition-transform transform group-hover:scale-105 ${stat.color}`}>
+                <div key={idx} className="flex flex-col items-center gap-1 sm:gap-2 group cursor-pointer">
+                  <span className="text-[10px] sm:text-sm font-medium text-gray-600 group-hover:text-gray-900 transition-colors">{stat.label}</span>
+                  <div className={`px-3 sm:px-6 py-1 sm:py-2 rounded-full text-[10px] sm:text-sm font-medium transition-transform transform group-hover:scale-105 ${stat.color}`}>
                     {stat.value}
                   </div>
                 </div>
@@ -239,23 +239,23 @@ export const Analytics = () => {
           </div>
 
           {/* Large Stats */}
-          <div className="flex gap-8 lg:gap-16">
+          <div className="flex flex-wrap sm:flex-nowrap gap-4 sm:gap-8 lg:gap-16 w-full lg:w-auto justify-between sm:justify-end">
             {currentData.largeStats.map((stat, idx) => (
               <div key={idx} className="flex flex-col items-center group cursor-pointer">
                 <div className="flex items-start transition-transform transform group-hover:-translate-y-1">
-                  <span className="text-gray-400 mt-2 mr-1 group-hover:text-gray-600 transition-colors">
+                  <span className="text-gray-400 mt-1 sm:mt-2 mr-1 group-hover:text-gray-600 transition-colors">
                     {getIconForStat(stat.icon)}
                   </span>
-                  <span className="text-5xl lg:text-6xl font-light tracking-tight text-gray-900">{stat.value}</span>
+                  <span className="text-2xl sm:text-4xl lg:text-6xl font-light tracking-tight text-gray-900">{stat.value}</span>
                 </div>
-                <span className="text-sm font-medium text-gray-500 mt-1 group-hover:text-gray-800 transition-colors">{stat.label}</span>
+                <span className="text-[10px] sm:text-sm font-medium text-gray-500 mt-1 group-hover:text-gray-800 transition-colors">{stat.label}</span>
               </div>
             ))}
           </div>
         </div>
 
         {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-12 gap-4 sm:gap-6">
           
           {/* Left Column (Profile & List) */}
           <div className="md:col-span-1 xl:col-span-3 space-y-6 flex flex-col">
@@ -298,8 +298,8 @@ export const Analytics = () => {
           {/* Center Column (Charts) */}
           <div className="md:col-span-1 xl:col-span-5 space-y-6 flex flex-col">
             {/* Progress Bar Chart */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[32px] p-6 lg:p-8 border border-white/60 shadow-sm min-h-[320px] flex flex-col hover:shadow-md transition-shadow">
-              <div className="flex justify-between items-start mb-8">
+            <div className="bg-white/40 backdrop-blur-xl rounded-2xl sm:rounded-[32px] p-4 sm:p-6 border border-white/60 shadow-sm min-h-[280px] sm:min-h-[320px] flex flex-col hover:shadow-md transition-shadow">
+              <div className="flex justify-between items-start mb-4 sm:mb-8">
                 <div>
                   <h3 className="text-lg font-medium text-gray-800">{currentData.progressTitle}</h3>
                   <div className="flex items-baseline gap-2 mt-1">
@@ -331,7 +331,7 @@ export const Analytics = () => {
             </div>
 
             {/* Time Tracker */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[32px] p-6 lg:p-8 border border-white/60 shadow-sm min-h-[320px] flex flex-col relative overflow-hidden hover:shadow-md transition-shadow flex-1">
+            <div className="bg-white/60 backdrop-blur-xl rounded-[32px] p-6 lg:p-8 border border-white/60 shadow-sm min-h-[280px] sm:min-h-[320px] flex flex-col relative overflow-hidden hover:shadow-md transition-shadow flex-1">
               <div className="flex justify-between items-start z-10">
                 <h3 className="text-lg font-medium text-gray-800">{currentData.trackerTitle}</h3>
                 <button className="w-8 h-8 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 hover:bg-gray-50 transition-colors">
@@ -340,7 +340,7 @@ export const Analytics = () => {
               </div>
 
               <div className="flex-1 flex flex-col items-center justify-center z-10 py-4">
-                <div className="relative w-48 h-48 flex items-center justify-center group cursor-pointer">
+                <div className="relative w-36 h-36 sm:w-48 sm:h-48 flex items-center justify-center group cursor-pointer">
                   {/* Circular dashed border simulation */}
                   <svg className="absolute inset-0 w-full h-full transform group-hover:scale-105 transition-transform duration-500" viewBox="0 0 100 100">
                     {/* Background Arc */}
@@ -348,22 +348,22 @@ export const Analytics = () => {
                     {/* Foreground Arc */}
                     <path d="M 15 80 A 45 45 0 1 1 85 80" fill="none" stroke="#4f46e5" strokeWidth="6" strokeDasharray="10 6" strokeLinecap="round" />
                   </svg>
-                  <div className="text-center mt-4">
-                    <div className="text-4xl font-light text-gray-900">{currentData.trackerTime}</div>
-                    <div className="text-xs text-gray-500 mt-1">{currentData.trackerSubtitle}</div>
+                  <div className="text-center mt-2 sm:mt-4">
+                    <div className="text-2xl sm:text-4xl font-light text-gray-900">{currentData.trackerTime}</div>
+                    <div className="text-[10px] sm:text-xs text-gray-500 mt-1">{currentData.trackerSubtitle}</div>
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-center gap-4 mt-2 z-10">
-                <button className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 text-gray-600 hover:bg-gray-50 hover:scale-105 transition-all">
-                  <Play className="w-5 h-5 ml-1" />
+              <div className="flex justify-center gap-3 sm:gap-4 mt-2 z-10">
+                <button className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 text-gray-600 hover:bg-gray-50 hover:scale-105 transition-all">
+                  <Play className="w-4 h-4 sm:w-5 sm:h-5 ml-1" />
                 </button>
-                <button className="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 text-gray-600 hover:bg-gray-50 hover:scale-105 transition-all">
-                  <Pause className="w-5 h-5" />
+                <button className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white flex items-center justify-center shadow-sm border border-gray-100 text-gray-600 hover:bg-gray-50 hover:scale-105 transition-all">
+                  <Pause className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
-                <button className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center shadow-sm text-white hover:bg-blue-700 hover:scale-105 transition-all ml-auto">
-                  <Clock className="w-5 h-5" />
+                <button className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-blue-600 flex items-center justify-center shadow-sm text-white hover:bg-blue-700 hover:scale-105 transition-all ml-auto">
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5" />
                 </button>
               </div>
             </div>
@@ -372,26 +372,26 @@ export const Analytics = () => {
           {/* Right Column (Onboarding & Tasks) */}
           <div className="md:col-span-2 xl:col-span-4 space-y-6 flex flex-col">
             {/* Onboarding Bars */}
-            <div className="bg-white/60 backdrop-blur-xl rounded-[32px] p-6 lg:p-8 border border-white/60 shadow-sm min-h-[320px] hover:shadow-md transition-shadow">
-              <div className="flex justify-between items-end mb-8">
+            <div className="bg-white/60 backdrop-blur-xl rounded-[32px] p-6 lg:p-8 border border-white/60 shadow-sm min-h-[280px] sm:min-h-[320px] hover:shadow-md transition-shadow">
+              <div className="flex justify-between items-end mb-6 sm:mb-8">
                 <h3 className="text-lg font-medium text-gray-800">{currentData.barsTitle}</h3>
-                <span className="text-4xl font-light text-gray-900">18%</span>
+                <span className="text-2xl sm:text-4xl font-light text-gray-900">18%</span>
               </div>
               
-              <div className="flex flex-wrap gap-4 mt-6 justify-center">
+              <div className="flex flex-wrap gap-3 sm:gap-4 mt-6 justify-center">
                 {currentData.bars.map((bar, idx) => (
-                  <div key={idx} className="flex flex-col items-center gap-4 flex-1">
-                    <div className={`w-14 h-14 rounded-full flex items-center justify-center text-xs font-medium text-center leading-tight shadow-sm ${bar.color} ${bar.color.includes('bg-gray-300') ? 'text-transparent' : ''}`}>
+                  <div key={idx} className="flex flex-col items-center gap-2 sm:gap-4 flex-1">
+                    <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-medium text-center leading-tight shadow-sm ${bar.color} ${bar.color.includes('bg-gray-300') ? 'text-transparent' : ''}`}>
                       {bar.label}
                     </div>
-                    <span className="text-xs font-medium text-gray-500">{bar.value}%</span>
+                    <span className="text-[10px] sm:text-xs font-medium text-gray-500">{bar.value}%</span>
                   </div>
                 ))}
-                <div className="flex flex-col items-center gap-4 flex-1">
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center text-xs font-medium text-transparent bg-gray-200 shadow-sm">
+                <div className="flex flex-col items-center gap-2 sm:gap-4 flex-1">
+                  <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-full flex items-center justify-center text-[10px] sm:text-xs font-medium text-transparent bg-gray-200 shadow-sm">
                     Empty
                   </div>
-                  <span className="text-xs font-medium text-gray-500">0%</span>
+                  <span className="text-[10px] sm:text-xs font-medium text-gray-500">0%</span>
                 </div>
               </div>
             </div>
